@@ -1,2 +1,3 @@
 APPID  = "ttn_appId"
 PSW    = 'ttn-account-v2.uuid'
+UTL = 'eu.thethings.network'

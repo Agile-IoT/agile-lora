@@ -1,4 +1,3 @@
-
 #################################################################
 #   Copyright (C) 2018  
 #   This program and the accompanying materials are made
@@ -12,10 +11,15 @@ import enum
 from queue import Queue
 
 #Global variables
-BUS_NAME = "org.eclipse.agail.protocol"
-BUS_PATH = "/org/eclipse/agail/protocol"
+BASE_NAME="org.eclipse.agail"
+BASE_PATH="/org/eclipse/agail"
 
+BUS_NAME = BASE_NAME + ".protocol"
+BUS_PATH = BASE_PATH + "/protocol"
+
+NEW_DEVICE_SIGNAL_NAME= BASE_NAME + ".NewDevice"
 NEW_DEVICE_SIGNAL_PATH = "/org/eclipse/agail/NewDevice"
+NEW_RECORD_SIGNAL_NAME= BASE_NAME + ".NewRecord"
 NEW_RECORD_SIGNAL_PATH = "/org/eclipse/agail/NewRecord"
 
 # Queue

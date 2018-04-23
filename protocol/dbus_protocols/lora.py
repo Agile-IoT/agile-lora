@@ -19,11 +19,12 @@ import dbus.service
 import logging
 import threading
 import pydash
-
+import struct 
+import time, datetime, ciso8601
 
 # --- Module-specific variables ---------
 PROTOCOL_NAME = "LoRa"
-DRIVER_NAME = "LoRaLAN"
+DRIVER_NAME = "LoRa"
 
 # --- Classes -----------
 class LoRaWAN(dbus.service.Object):   
@@ -87,8 +88,7 @@ class LoRaWAN(dbus.service.Object):
    @dbus.service.method(globals.BUS_NAME, in_signature="", out_signature="")
    def StopDiscovery(self):  
       self._logger.info("Discovery stopped")      
-      if (self._discovery_status.name == "RUNNING"):   
-         print ("ERTRT")      
+      if (self._discovery_status.name == "RUNNING"):         
          self._task_discovery.cancel()
          self._discovery_status = globals.DISCOVERY_STATUS['NONE']
       else:
@@ -111,33 +111,58 @@ class LoRaWAN(dbus.service.Object):
       return out   
 
    ### CONNECT
-   @dbus.service.method(globals.BUS_NAME, in_signature="s", out_signature="s")
+   @dbus.service.method(globals.BUS_NAME, in_signature="s", out_signature="")
    def Connect(self,device_id):    
       hit = pydash.find(self._devices_list, {
-            "name": device_id
+            "hardwareID": device_id
             })
       if (hit):
-            self._logger.info("Device " + device_id + " already connected")      
-            return "Device connected"
+            if (hit['connected'] == False):
+               self._logger.info("Device " + device_id + " CONNECTED")
+               hit['connected'] = True                  
       else:            
-           ProtocolException("LoRa", "Device " + device_id + "not found" )   
-           return "Error - Device not found"
+           ProtocolException("CONNECT", "Device " + device_id + "not found" )              
 
    ### DISCONNECT
-   @dbus.service.method(globals.BUS_NAME, in_signature="", out_signature="")
-   def Disconnect(self):
-      self._logger.info("Disconnected")
+   @dbus.service.method(globals.BUS_NAME, in_signature="s", out_signature="")
+   def Disconnect(self, device_id):
+      hit = pydash.find(self._devices_list, {
+            "hardwareID": device_id
+            })
+      if (hit):
+            if (hit['connected'] == True):
+               self._logger.info("Device " + device_id + " DISCONNECTED")
+               hit['connected'] = False                              
+      else:            
+           ProtocolException("DISCONNECT", "Device " + device_id + "not found" ) 
+      
+
+   ### READ (return last observation of a particular sensor)
+   @dbus.service.method(globals.BUS_NAME, in_signature="sa{ss}", out_signature="ay")
+   def Read(self, device_id, profile):
+
+      hit_1 = pydash.find(self._devices_list, {"hardwareID": device_id})
+      assert(hit_1 != None)
+
+      hit_2 = pydash.find(hit_1["streams"], {"id": profile["id"]})
+      assert(hit_2 != None)
+
+      return self.SerializeValue(hit_2["format"], hit_2["value"])
+
+   ### WRITE (return last observation)
+   @dbus.service.method(globals.BUS_NAME, in_signature="sa{ss}ay", out_signature="")
+   def Write(self, device_id, profile, payload):
+      pass
 
    ### DATA (return last observation)
-   @dbus.service.method(globals.BUS_NAME, in_signature="", out_signature="ays")
-   def Data(self):      
-      return bytearray([b'\x13\xff\x00\x00\x08\x00', 'adlkjasd'])
+   @dbus.service.method(globals.BUS_NAME, in_signature="", out_signature="ay")
+   def Data(self): 
+      return self.GetLastRecordValue()
 
    ### DEVICE STATUS
    @dbus.service.method(globals.BUS_NAME, in_signature="s", out_signature="s")
-   def DeviceStatus(self, device_id):      
-      self._logger.info("DeviceStatus")     
-      hit = pydash.find(self._devices_list, {"deviceID": device_id})
+   def DeviceStatus(self, device_id):             
+      hit = pydash.find(self._devices_list, {"hardwareID": device_id})
       if (hit):
          return hit['status']
       else: 
@@ -148,29 +173,35 @@ class LoRaWAN(dbus.service.Object):
    def NewRecordNotification(self):            
       self.ParseQueue()   
 
-   @dbus.service.method(globals.BUS_NAME, in_signature="a{sv}", out_signature="")
-   def Subscribe(self, args):
-      print("Subscribed")
-      self.Test(args)
+   @dbus.service.method(globals.BUS_NAME, in_signature="sa{ss}", out_signature="")
+   def Subscribe(self, device_id, profile):
+      hit_1 = pydash.find(self._devices_list, {"hardwareID": device_id})
+      assert(hit_1 != None)
+      hit_2 = pydash.find(hit_1["streams"], {"id": profile["id"]})
+      assert(hit_2 != None)
+      hit_2['subscribed'] = True            
 
-   @dbus.service.method(globals.BUS_NAME, in_signature="a{sv}", out_signature="")
-   def Unsubscribe(self, args):
-      pass
+   @dbus.service.method(globals.BUS_NAME, in_signature="sa{ss}", out_signature="")
+   def Unsubscribe(self, device_id, profile):
+      hit_1 = pydash.find(self._devices_list, {"hardwareID": device_id})
+      assert(hit_1 != None)
+      hit_2 = pydash.find(hit_1["streams"], {"id": profile["id"]})
+      assert(hit_2 != None)
+      hit_2['subscribed'] = False      
 
    #SIGNALS
-#    @dbus.service.signal(globals.BUS_NAME, signature="(sssssx)")
-   @dbus.service.signal(globals.BUS_NAME, signature="ayss")
-   def NewRecordSignal(self, id, value, profile):
+   @dbus.service.signal(globals.NEW_RECORD_SIGNAL_NAME, signature="aysa{ss}")   
+   def NewRecordSignal(self, value, id, profile):
       pass
       
-   @dbus.service.signal(globals.BUS_NAME, signature="(ssss)")   
+   @dbus.service.signal(globals.NEW_DEVICE_SIGNAL_NAME, signature="(ssss)")   
    def NewDeviceSignal(self, device_description):
       pass
 
-   # Non-DBUS methods (discovery, etc.)
+   ###### Non-DBUS methods (discovery, etc.) ######
    def Discovery(self):
-      self._logger.info("Device Discovery")  
-      #Discovery tasks (basically, add new devices)
+      self._logger.info("Device discovery")  
+      #Discovery tasks (basically, add new devices) - TBI
 
       self._task_discovery = threading.Timer(5.0, self.Discovery)
       self._task_discovery.start()  
@@ -181,25 +212,42 @@ class LoRaWAN(dbus.service.Object):
       if (not globals.queue.empty()):
          while (not globals.queue.empty()):
             item = globals.queue.get(block=False)
-            # print("-----ITEM-----")
-            # print(item)            
-            # print("----------")
+
+            # print ("----- Received item -----")
+            # print(item)
             
             hit = pydash.find(self._devices_list, {"deviceID": item['deviceID']})
             if (hit):
                self._logger.info("Existing item")  
-               if (self._discovery_status == globals.DISCOVERY_STATUS['RUNNING']):
-                  self.NewDeviceSignal([item['hardwareID'], globals.BUS_NAME + ".LoRa", item['deviceID'], item['status']])          
+               # Update obsevation data
+               for i in item["streams"]:
+                     hit_phenomenon = pydash.find (hit['streams'], {"id": i["id"]})
+                     if (hit_phenomenon):      #Update values                       
+                              hit_phenomenon["value"] = i["value"]
+                              hit_phenomenon["lastUpdate"] = i["lastUpdate"]                              
+                           
+                     else:    # New phenomenon
+                           hit["streams"].append({
+                                 "id": i["id"],
+                                 "value": i["value"],
+                                 "unit": i["unit"],
+                                 "lastUpdate": i["lastUpdate"],
+                                 "format": i["format"],
+                                 "subscribed": False
+                           })
+                     # Record signal handler
+                     self.ManageRecordSignal(item['hardwareID'], i)
             
-            else: #Update obsevation data
+            else: 
                self._logger.info("New item " + item['deviceID'])  
+               # Default option - connected = False
+               item['connected'] = False
                self._devices_list.append(item)                    
+               for i in item["streams"]:
+                     self.ManageRecordSignal(item['hardwareID'], i)
 
-               if (self._discovery_status == globals.DISCOVERY_STATUS['RUNNING']):
-                  self.NewDeviceSignal([item['hardwareID'], globals.BUS_NAME + ".LoRa", item['deviceID'], item['status']])          
-      
-         # Manage subscriptions
-         self.ManageRecord(item)     
+            if (self._discovery_status == globals.DISCOVERY_STATUS['RUNNING']):
+               self.NewDeviceSignal([item['hardwareID'], globals.BUS_NAME + ".LoRa", item['deviceID'], item['status']])
 
          # The last one will be saved as the last record
          self.SaveLastRecordObject(item, item['streams'][-1])
@@ -210,27 +258,53 @@ class LoRaWAN(dbus.service.Object):
       self._queue_check = threading.Timer(5.0, self.ParseQueue)
       self._queue_check.start()
 
-   def ManageRecord(self, record,): 
-      #TBC
-      pass
+   def ManageRecordSignal(self, id, item):   
+
+      hit_1 = pydash.find(self._devices_list, {"hardwareID": id})
+      assert(hit_1 != None)
+
+      hit_2 = pydash.find(hit_1["streams"], {"id": item["id"]})
+      assert(hit_2 != None)
+      
+      if (hit_2['subscribed'] == True):  # Change to True after testing                           
+            value = self.SerializeValue(item["format"], item["value"])
+            self.NewRecordSignal(value, id, {"id": item["id"]})
+
 
    def SaveLastRecordObject(self, record, component):
+      
       self._last_record = {
          "deviceID": record['hardwareID'],
          "componentID": component['id'],
          "value": component['value'],
          "unit": component['unit'],
          "format": component['format'],
-         "lastUpdate": record['lastUpdateTs']
+         "lastUpdate": component['lastUpdate']
       }      
-      # print(list(self._last_record.values()))
-      #Signal test
-      print (bytes([0x13, 0x00, 0x00, 0x00, 0x08, 0x00]))
-      # print (b'\x13\0\0\0\x08\0')
-      self.NewRecordSignal(bytes([0x1, 0x02]), self._last_record['deviceID'], 'ss' )
 
-   def SendRecord(self, record):
-      pass
+   def SerializeValue(self, value_type, value):
+      if (value_type == "integer"):
+            output = bytearray((value).to_bytes(4, 'big'))            
+      elif (value_type == "float"):            
+            output = bytearray(struct.pack("f", float(value))) 
+      elif (value_type == "string"):
+            output = value.encode()
+      else:
+            ProtocolException("Format value not compatible (choose between integer, float or string")   
+      
+      return output
+
+   def GetLastRecordValue(self):
+    
+      if (self._last_record["format"] == "integer"):
+            output = bytearray((self._last_record["value"]).to_bytes(4, 'big'))            
+      elif (self._last_record["format"] == "float"):            
+            output = bytearray(struct.pack("f", float(self._last_record["value"]))) 
+      elif (self._last_record["format"] == "string"):
+            output = self._last_record["value"].encode()
+      else:
+            ProtocolException("Format value not compatible (choose between integer, float or string")         
+      return output
 
    def TearDown(self):
       if (isinstance(self._task_discovery, threading.Timer)):

@@ -10,8 +10,8 @@
 version: '2.1'
 
 services:
-  agile-lora-gateway:
-    image: agile-lora-gateway
+  agile-lora:
+    image: agile-lora
     build: .
     ports:
       - 5000:5000

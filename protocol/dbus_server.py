@@ -1,6 +1,5 @@
 #! /usr/bin/python3
 
-
 #################################################################
 #   Copyright (C) 2018  
 #   This program and the accompanying materials are made
