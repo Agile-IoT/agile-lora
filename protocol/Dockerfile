@@ -8,7 +8,7 @@
 #   Contributors: ATOS
 ################################################################# 
 
-FROM resin/raspberrypi3-python
+FROM resin/raspberrypi3-python:latest
 
 # Install dependencies
 RUN apt-get update && apt-get install --no-install-recommends -y \
@@ -31,6 +31,8 @@ RUN python3 -m pip install -r requirements.txt
 
 COPY dbus_protocols dbus_protocols
 COPY mqtt mqtt
+COPY config config
 COPY dbus_server.py dbus_server.py
+
 
 CMD ./dbus_server.py
