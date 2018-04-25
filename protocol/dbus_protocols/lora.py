@@ -56,7 +56,7 @@ class LoRaWAN(dbus.service.Object):
       self._logger.info("LoRa protocol instanced") 
       # Bus init
       super().__init__(dbus.SessionBus(), globals.BUS_PATH + "/" +  self._protocol_name)
-      self._bus = dbus.service.BusName(globals.BUS_NAME + "/" +  self._protocol_name, dbus.SessionBus(), do_not_queue=True)   
+      self._bus = dbus.service.BusName(globals.BUS_NAME + "." +  self._protocol_name, dbus.SessionBus(), do_not_queue=True)   
 
    # Override DBus object methods     
    ### GENERIC METHODS      
