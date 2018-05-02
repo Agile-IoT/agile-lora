@@ -1,3 +1,6 @@
+APP_SERVER = "LoRaServer"  # Current options handled ("TTN", "Dummy", "LoRaServer")
+
+#Parameters to be filled 
 APPID  = "ttn_appId"
 PSW    = 'ttn-account-v2.uuid'
 UTL = 'eu.thethings.network'

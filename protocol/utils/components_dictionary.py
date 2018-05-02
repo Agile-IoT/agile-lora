@@ -1,4 +1,3 @@
-
 #################################################################
 #   Copyright (C) 2018  
 #   This program and the accompanying materials are made
@@ -7,7 +6,6 @@
 #   SPDX-License-Identifier: EPL-2.0
 #   Contributors: ATOS
 ################################################################# 
-
 
 dictionary = {
   "Temperature": {
@@ -23,17 +21,29 @@ dictionary = {
     "format": "float"
   },
   "Digital_In": {
-    "unit": "%",
+    "unit": "unitless",
     "format": "float"
   },
   "Digital_Out": {
-    "unit": "%",
+    "unit": "unitless",
     "format": "float"
+  },
+  "Analog_In": {
+    "unit": "unitless",
+    "format": "float"
+  },
+  "Analog_Out": {
+    "unit": "unitless",
+    "format": "float"
+  },
+  "Illuminance":{
+    "unit": "Degrees (º)",
+    "format": "integer"
   },
   "Latitude": {
     "unit": "Degrees (º)",
     "format": "float"
-  },
+  },  
   "Longitude": {
     "unit": "Degrees (º)",
     "format": "float"
@@ -49,5 +59,17 @@ dictionary = {
   "RSSI": {
     "unit": "dB",
     "format": "float"
+  },
+  "Accelerometer": {
+    "unit": "G",
+    "format": "float"
+  },
+  "Gyrometer": {
+    "unit": "Degrees per second",
+    "format": "float"
+  },
+  "Presence": {
+    "unit": "boolean",
+    "format": "boolean"
   }
 }

@@ -13,6 +13,7 @@
 import sys
 sys.path.append('config/')
 sys.path.append('mqtt/')
+sys.path.append('utils/')
 
 from gi.repository import GLib
 import dbus
@@ -28,7 +29,7 @@ import logging
 # -----------------------
 
 # --- Variables ---------
-LOGLEVEL = logging.INFO # DEBUG, INFO, WARNING, ERROR, CRITICAL
+LOGLEVEL = logging.INFO       # DEBUG, INFO, WARNING, ERROR, CRITICAL
 mainloop = GLib.MainLoop()
 # -----------------------
 

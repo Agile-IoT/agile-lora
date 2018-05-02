@@ -9,10 +9,9 @@
 
 # --- Imports -----------
 import sys
-sys.path.append('../config/')
-import globals as globals
 
-from queue import Queue
+# sys.path.append("../config/")
+import globals as globals
 
 import dbus
 import dbus.service
@@ -21,6 +20,7 @@ import threading
 import pydash
 import struct 
 import time, datetime, ciso8601
+from queue import Queue
 
 # --- Module-specific variables ---------
 PROTOCOL_NAME = "LoRa"
@@ -36,7 +36,7 @@ class LoRaWAN(dbus.service.Object):
       # Properties
       self._protocol_name = PROTOCOL_NAME
       self._driver_name = DRIVER_NAME
-      self._discovery_status = globals.DISCOVERY_STATUS['NONE']   
+      self._discovery_status = globals.DISCOVERY_STATUS["NONE"]   
       self._devices_list = []
       self._subscribed_devices = []
       self._last_record = {}   
@@ -79,7 +79,7 @@ class LoRaWAN(dbus.service.Object):
       
       if (self._discovery_status.name == "NONE"):
          print("Discovery status ON")
-         self._discovery_status = globals.DISCOVERY_STATUS['RUNNING'] 
+         self._discovery_status = globals.DISCOVERY_STATUS["RUNNING"] 
          self.Discovery()           
       else: 
          print("Discovery status already on")   
@@ -90,7 +90,7 @@ class LoRaWAN(dbus.service.Object):
       self._logger.info("Discovery stopped")      
       if (self._discovery_status.name == "RUNNING"):         
          self._task_discovery.cancel()
-         self._discovery_status = globals.DISCOVERY_STATUS['NONE']
+         self._discovery_status = globals.DISCOVERY_STATUS["NONE"]
       else:
           self._logger.info("Discovery already off")      
 
@@ -106,7 +106,7 @@ class LoRaWAN(dbus.service.Object):
       out = []
       if len(self._devices_list):       
          for dev in self._devices_list:
-            out.append([dev['hardwareID'], globals.BUS_NAME + ".LoRa", dev['deviceID'], dev['status']])
+            out.append([dev["hardwareID"], globals.BUS_NAME + ".LoRa", dev["deviceID"], dev["status"]])
       
       return out   
 
@@ -117,9 +117,9 @@ class LoRaWAN(dbus.service.Object):
             "hardwareID": device_id
             })
       if (hit):
-            if (hit['connected'] == False):
+            if (hit["connected"] == False):
                self._logger.info("Device " + device_id + " CONNECTED")
-               hit['connected'] = True                  
+               hit["connected"] = True                  
       else:            
            ProtocolException("CONNECT", "Device " + device_id + "not found" )              
 
@@ -130,9 +130,9 @@ class LoRaWAN(dbus.service.Object):
             "hardwareID": device_id
             })
       if (hit):
-            if (hit['connected'] == True):
+            if (hit["connected"] == True):
                self._logger.info("Device " + device_id + " DISCONNECTED")
-               hit['connected'] = False                              
+               hit["connected"] = False                              
       else:            
            ProtocolException("DISCONNECT", "Device " + device_id + "not found" ) 
       
@@ -164,9 +164,9 @@ class LoRaWAN(dbus.service.Object):
    def DeviceStatus(self, device_id):             
       hit = pydash.find(self._devices_list, {"hardwareID": device_id})
       if (hit):
-         return hit['status']
+         return hit["status"]
       else: 
-         return globals.DEVICE_STATUS['ERROR'].name      
+         return globals.DEVICE_STATUS["ERROR"].name      
 
    # Need to be fixed (DBUS multi-threading)
    @dbus.service.method(globals.BUS_NAME, in_signature="", out_signature="")
@@ -179,7 +179,8 @@ class LoRaWAN(dbus.service.Object):
       assert(hit_1 != None)
       hit_2 = pydash.find(hit_1["streams"], {"id": profile["id"]})
       assert(hit_2 != None)
-      hit_2['subscribed'] = True            
+      hit_2["subscribed"] = True        
+      self._logger.info("Subscribed to " + device_id)  
 
    @dbus.service.method(globals.BUS_NAME, in_signature="sa{ss}", out_signature="")
    def Unsubscribe(self, device_id, profile):
@@ -187,7 +188,7 @@ class LoRaWAN(dbus.service.Object):
       assert(hit_1 != None)
       hit_2 = pydash.find(hit_1["streams"], {"id": profile["id"]})
       assert(hit_2 != None)
-      hit_2['subscribed'] = False      
+      hit_2["subscribed"] = False      
 
    #SIGNALS
    @dbus.service.signal(globals.NEW_RECORD_SIGNAL_NAME, signature="aysa{ss}")   
@@ -201,12 +202,15 @@ class LoRaWAN(dbus.service.Object):
    ###### Non-DBUS methods (discovery, etc.) ######
    def Discovery(self):
       self._logger.info("Device discovery")  
-      #Discovery tasks (basically, add new devices) - TBI
+      
+      #Discovery tasks - First version -> Discover all devices
+      if (self._discovery_status == globals.DISCOVERY_STATUS["RUNNING"]):           
+            for item in self._devices_list:            
+                  self.NewDeviceSignal([item["hardwareID"], globals.BUS_NAME + ".LoRa", item["deviceID"], item["status"]])      
 
       self._task_discovery = threading.Timer(5.0, self.Discovery)
       self._task_discovery.start()  
-
-   #Parse MQTT queue
+   
    def ParseQueue(self):                  
 
       if (not globals.queue.empty()):
@@ -214,14 +218,14 @@ class LoRaWAN(dbus.service.Object):
             item = globals.queue.get(block=False)
 
             # print ("----- Received item -----")
-            # print(item)
+            # print(item)            
             
-            hit = pydash.find(self._devices_list, {"deviceID": item['deviceID']})
+            hit = pydash.find(self._devices_list, {"hardwareID": item["hardwareID"]})
             if (hit):
                self._logger.info("Existing item")  
                # Update obsevation data
                for i in item["streams"]:
-                     hit_phenomenon = pydash.find (hit['streams'], {"id": i["id"]})
+                     hit_phenomenon = pydash.find (hit["streams"], {"id": i["id"]})
                      if (hit_phenomenon):      #Update values                       
                               hit_phenomenon["value"] = i["value"]
                               hit_phenomenon["lastUpdate"] = i["lastUpdate"]                              
@@ -236,21 +240,18 @@ class LoRaWAN(dbus.service.Object):
                                  "subscribed": False
                            })
                      # Record signal handler
-                     self.ManageRecordSignal(item['hardwareID'], i)
+                     self.ManageRecordSignal(item["hardwareID"], i)
             
             else: 
-               self._logger.info("New item " + item['deviceID'])  
+               self._logger.info("New item - lora" + item["hardwareID"])  
                # Default option - connected = False
-               item['connected'] = False
+               item["connected"] = False
                self._devices_list.append(item)                    
                for i in item["streams"]:
-                     self.ManageRecordSignal(item['hardwareID'], i)
-
-            if (self._discovery_status == globals.DISCOVERY_STATUS['RUNNING']):
-               self.NewDeviceSignal([item['hardwareID'], globals.BUS_NAME + ".LoRa", item['deviceID'], item['status']])
+                     self.ManageRecordSignal(item["hardwareID"], i)         
 
          # The last one will be saved as the last record
-         self.SaveLastRecordObject(item, item['streams'][-1])
+         self.SaveLastRecordObject(item, item["streams"][-1])
       else:
          pass
       
@@ -266,25 +267,24 @@ class LoRaWAN(dbus.service.Object):
       hit_2 = pydash.find(hit_1["streams"], {"id": item["id"]})
       assert(hit_2 != None)
       
-      if (hit_2['subscribed'] == True):  # Change to True after testing                           
+      if (hit_2["subscribed"] == True):  # Change to True after testing                           
             value = self.SerializeValue(item["format"], item["value"])
             self.NewRecordSignal(value, id, {"id": item["id"]})
 
-
    def SaveLastRecordObject(self, record, component):
-      
+
       self._last_record = {
-         "deviceID": record['hardwareID'],
-         "componentID": component['id'],
-         "value": component['value'],
-         "unit": component['unit'],
-         "format": component['format'],
-         "lastUpdate": component['lastUpdate']
+         "deviceID": record["hardwareID"],
+         "componentID": component["id"],
+         "value": component["value"],
+         "unit": component["unit"],
+         "format": component["format"],
+         "lastUpdate": component["lastUpdate"]
       }      
 
    def SerializeValue(self, value_type, value):
       if (value_type == "integer"):
-            output = bytearray((value).to_bytes(4, 'big'))            
+            output = bytearray((value).to_bytes(4, "big"))            
       elif (value_type == "float"):            
             output = bytearray(struct.pack("f", float(value))) 
       elif (value_type == "string"):
@@ -297,7 +297,7 @@ class LoRaWAN(dbus.service.Object):
    def GetLastRecordValue(self):
     
       if (self._last_record["format"] == "integer"):
-            output = bytearray((self._last_record["value"]).to_bytes(4, 'big'))            
+            output = bytearray((self._last_record["value"]).to_bytes(4, "big"))            
       elif (self._last_record["format"] == "float"):            
             output = bytearray(struct.pack("f", float(self._last_record["value"]))) 
       elif (self._last_record["format"] == "string"):
