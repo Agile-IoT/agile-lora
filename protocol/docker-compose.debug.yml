@@ -2,7 +2,7 @@ version: '2.1'
 
 services:
   agile-lora-gateway:
-    image: agile-lora-gateway
+    image: agile-lora
     build:
       context: .
       dockerfile: Dockerfile

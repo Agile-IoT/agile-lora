@@ -2,12 +2,9 @@
 #######  Pip module requirements  #######
 ####### for the AGILE DBus Server #######
 #
-# Flask==0.10.1
 dbus-python
 paho-mqtt
 pydash
-# random
 queuelib
 ciso8601
 pytz
-#ttn

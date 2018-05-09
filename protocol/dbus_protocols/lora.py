@@ -142,12 +142,16 @@ class LoRaWAN(dbus.service.Object):
    def Read(self, device_id, profile):
 
       hit_1 = pydash.find(self._devices_list, {"hardwareID": device_id})
-      assert(hit_1 != None)
-
-      hit_2 = pydash.find(hit_1["streams"], {"id": profile["id"]})
-      assert(hit_2 != None)
-
-      return self.SerializeValue(hit_2["format"], hit_2["value"])
+      if (hit_1 != None):
+            hit_2 = pydash.find(hit_1["streams"], {"id": profile["id"]})
+            if (hit_2 != None):
+                  return self.SerializeValue(hit_2["format"], hit_2["value"])
+            else:
+                  ProtocolException("Component not found (subscription to device ID) " + device_id)   
+                  return bytearray([])
+      else:
+            ProtocolException("Component not found (subscription to device ID) " + device_id)   
+            return bytearray([])
 
    ### WRITE (return last observation)
    @dbus.service.method(globals.BUS_NAME, in_signature="sa{ss}ay", out_signature="")
@@ -176,19 +180,28 @@ class LoRaWAN(dbus.service.Object):
    @dbus.service.method(globals.BUS_NAME, in_signature="sa{ss}", out_signature="")
    def Subscribe(self, device_id, profile):
       hit_1 = pydash.find(self._devices_list, {"hardwareID": device_id})
-      assert(hit_1 != None)
-      hit_2 = pydash.find(hit_1["streams"], {"id": profile["id"]})
-      assert(hit_2 != None)
-      hit_2["subscribed"] = True        
-      self._logger.info("Subscribed to " + device_id)  
+      if (hit_1 != None):
+            print("FSDF")
+            hit_2 = pydash.find(hit_1["streams"], {"id": profile["id"]})
+            if (hit_2 != None):
+                  hit_2["subscribed"] = True        
+                  self._logger.info("Subscribed to " + device_id)  
+            else:                  
+                  ProtocolException("Component " + profile['id']+ " not found (subscription to device ID) " + device_id)                     
+      else:
+            ProtocolException("Component not found (subscription to device ID) " + device_id)                 
 
    @dbus.service.method(globals.BUS_NAME, in_signature="sa{ss}", out_signature="")
    def Unsubscribe(self, device_id, profile):
       hit_1 = pydash.find(self._devices_list, {"hardwareID": device_id})
-      assert(hit_1 != None)
-      hit_2 = pydash.find(hit_1["streams"], {"id": profile["id"]})
-      assert(hit_2 != None)
-      hit_2["subscribed"] = False      
+      if (hit_1 != None):
+            hit_2 = pydash.find(hit_1["streams"], {"id": profile["id"]})
+            if (hit_2 != None):
+                  hit_2["subscribed"] = False      
+            else:
+                  ProtocolException("Component not found (subscription to device ID) " + device_id)   
+      else:
+            ProtocolException("Component not found (subscription to device ID) " + device_id)   
 
    #SIGNALS
    @dbus.service.signal(globals.NEW_RECORD_SIGNAL_NAME, signature="aysa{ss}")   
@@ -216,7 +229,6 @@ class LoRaWAN(dbus.service.Object):
       if (not globals.queue.empty()):
          while (not globals.queue.empty()):
             item = globals.queue.get(block=False)
-
             # print ("----- Received item -----")
             # print(item)            
             
@@ -260,16 +272,13 @@ class LoRaWAN(dbus.service.Object):
       self._queue_check.start()
 
    def ManageRecordSignal(self, id, item):   
-
       hit_1 = pydash.find(self._devices_list, {"hardwareID": id})
-      assert(hit_1 != None)
-
-      hit_2 = pydash.find(hit_1["streams"], {"id": item["id"]})
-      assert(hit_2 != None)
-      
-      if (hit_2["subscribed"] == True):  # Change to True after testing                           
-            value = self.SerializeValue(item["format"], item["value"])
-            self.NewRecordSignal(value, id, {"id": item["id"]})
+      if (hit_1 != None):
+            hit_2 = pydash.find(hit_1["streams"], {"id": item["id"]})
+            if (hit_2 != None):      
+                  if (hit_2["subscribed"] == True):  # Change to True after testing                           
+                        value = self.SerializeValue(item["format"], item["value"])
+                        self.NewRecordSignal(value, id, {"id": item["id"]})
 
    def SaveLastRecordObject(self, record, component):
 
@@ -294,16 +303,22 @@ class LoRaWAN(dbus.service.Object):
       
       return output
 
-   def GetLastRecordValue(self):
-    
-      if (self._last_record["format"] == "integer"):
-            output = bytearray((self._last_record["value"]).to_bytes(4, "big"))            
-      elif (self._last_record["format"] == "float"):            
-            output = bytearray(struct.pack("f", float(self._last_record["value"]))) 
-      elif (self._last_record["format"] == "string"):
-            output = self._last_record["value"].encode()
+   def GetLastRecordValue(self):     
+
+      if (len(self._last_record)):    
+            if (self._last_record["format"] == "integer"):
+                  output = bytearray((self._last_record["value"]).to_bytes(4, "big"))            
+            elif (self._last_record["format"] == "float"):            
+                  output = bytearray(struct.pack("f", float(self._last_record["value"]))) 
+            elif (self._last_record["format"] == "string"):
+                  output = self._last_record["value"].encode()
+            elif (self._last_record["format"] == "boolean"):
+                  output = bytearray(struct.pack("?", bool(self._last_record["value"]))) 
+            else:
+                  ProtocolException("Format value not compatible (choose between integer, float or string")         
+            return output
       else:
-            ProtocolException("Format value not compatible (choose between integer, float or string")         
+            output = bytearray([])
       return output
 
    def TearDown(self):

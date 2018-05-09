@@ -28,14 +28,14 @@ class LoRaServerClient (threading.Thread):
    def TestParser(self):             
 
       print(datetime.datetime.now(), "Dummy data sent")
-      self._active_timer = threading.Timer(10.0, self.TestParser)                              
+      self._active_timer = threading.Timer(6, self.TestParser)                              
       self._active_timer.start()
 
       raw = {
             "applicationID": "1",
             "applicationName": "my-app",
             "deviceName": "Seeduino",
-            "devEUI": "4799b26900370056",
+            "devEUI": "3339343771356214",
             "rxInfo": [
                   {
                         "mac": "0000000000010203",
@@ -72,9 +72,10 @@ class LoRaServerClient (threading.Thread):
          "status": globals.STATUS_TYPE['AVAILABLE'].name
       } 
 
-      # streams = self._cayenne.decodeCayenneLpp(raw["data"], str(raw["rxInfo"][0]["time"]))           
+      streams = self._cayenne.decodeCayenneLpp(raw["data"], str(raw["rxInfo"][0]["time"]))           
       # streams = self._cayenne.decodeCayenneLpp("AHMAAAFnARACaAADAGQEAQA=", str(raw["rxInfo"][0]["time"]))         
-      streams = self._cayenne.decodeCayenneLpp("A2YBBGYA", str(raw["rxInfo"][0]["time"]))               
+      # streams = self._cayenne.decodeCayenneLpp("A2YBBGYA", str(raw["rxInfo"][0]["time"]))               
+
 
       data["streams"] = streams
       print (data)

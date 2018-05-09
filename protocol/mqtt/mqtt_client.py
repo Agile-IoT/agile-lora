@@ -39,12 +39,23 @@ class MqttClient():
         self._logger = logging.getLogger(globals.BUS_NAME)           
         # self._dbus = RecordNotifier()
 
-        if (mqtt_conf.APP_SERVER == "TTN"):
-            self._listener = ttn_client.TtnClient()
-        elif (mqtt_conf.APP_SERVER == "Dummy"):            
-            self._listener = dummy.DummyListener()    
-        elif (mqtt_conf.APP_SERVER == "LoRaServer"):  
-            self._listener = loraserver_client.LoRaServerClient()    
+        try:
+            if (mqtt_conf.APP_SERVER == "TTN"):
+                self._listener = ttn_client.TtnClient()        
+            elif (mqtt_conf.APP_SERVER == "LoRaServer"):  
+                self._listener = loraserver_client.LoRaServerClient()    
+            elif (mqtt_conf.APP_SERVER == "Dummy"):            
+                self._listener = dummy.DummyListener()    
+            else: 
+                self._listener = None
+                raise KeyError("Application server not found - " + mqtt_conf.APP_SERVER)                
+        except:                    
+            pass
+
 
     def TearDown(self):      
-        self._listener.TearDown()    
+
+        # Tear down MQTT instances
+        if (self._listener):
+            self._listener.TearDown()    
+        

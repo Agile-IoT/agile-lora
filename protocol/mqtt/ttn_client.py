@@ -47,48 +47,50 @@ class TtnClient (threading.Thread):
    def on_message (self, mqttc,obj,msg):      
 
       raw = json.loads(msg.payload.decode())     
-      data = {
-         "deviceID": raw["dev_id"],
-         "hardwareID": raw["hardware_serial"],            
-         # "lastUpdate": raw['metadata']['time'],
-         # "lastUpdateTs": int(time.mktime(ciso8601.parse_datetime(raw['metadata']['time']).timetuple())),
-         "streams": [
-         ],
-         "connected": False,
-         "status": globals.STATUS_TYPE['AVAILABLE'].name
-      }    
 
-      # Parse the payload field 
-      for key in raw['payload_fields']:  
-         temp = {
-               "id": "",
-               "value": str(raw['payload_fields'][key]),
-               "unit": "",
-               "format": "",
-               "subscribed": False,
-               "lastUpdate": raw['metadata']['time']
-               }
-         aux = key.split("_")
-         temp['id'] = '_'.join(aux[0:len(aux)-1]).title()
-         
-         #Asserts needed here
-         temp['unit']= component.dictionary[temp['id']]['unit']
-         temp['format']= component.dictionary[temp['id']]['format']        
-         data['streams'].append(temp)    
-         
-      # More data that can be parsed 
-      data['streams'].append({
-               "id": "SNR",
-               "value": raw['metadata']['gateways'][0]['snr'],
-               "unit": "dB",
-               "format": "float",
-               "subscribed": False,
-               "lastUpdate": raw['metadata']['time']       
-         }
-      )                                    
+      if (raw['payload_raw'] != None):
+            data = {
+                  "deviceID": raw["dev_id"],
+                  "hardwareID": raw["hardware_serial"],            
+                  "streams": [
+                  ],
+                  "connected": False,
+                  "status": globals.STATUS_TYPE['AVAILABLE'].name
+            }    
 
-      globals.queue.put(data)
-      self._logger.info("Message received")          
+            # Parse the payload field 
+            for key in raw['payload_fields']:  
+                  temp = {
+                        "id": "",
+                        "value": str(raw['payload_fields'][key]),
+                        "unit": "",
+                        "format": "",
+                        "subscribed": False,
+                        "lastUpdate": raw['metadata']['time']
+                        }
+                  aux = key.split("_")
+                  temp['id'] = '_'.join(aux[0:len(aux)-1]).title()
+                  
+                  #Asserts needed here
+                  temp['unit']= component.dictionary[temp['id']]['unit']
+                  temp['format']= component.dictionary[temp['id']]['format']        
+                  data['streams'].append(temp)    
+            
+            # More data that can be parsed 
+            data['streams'].append({
+                  "id": "SNR",
+                  "value": raw['metadata']['gateways'][0]['snr'],
+                  "unit": "dB",
+                  "format": "float",
+                  "subscribed": False,
+                  "lastUpdate": raw['metadata']['time']       
+            }
+            )                                    
+
+            globals.queue.put(data)
+            self._logger.info("Message received")     
+      else:
+            print("Message repeated")     
 
    def on_publish(self, mosq, obj, mid):
       print("mid: " + str(mid))

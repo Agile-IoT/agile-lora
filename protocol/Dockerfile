@@ -32,6 +32,7 @@ RUN python3 -m pip install -r requirements.txt
 COPY dbus_protocols dbus_protocols
 COPY mqtt mqtt
 COPY config config
+COPY utils utils
 COPY dbus_server.py dbus_server.py
 
 

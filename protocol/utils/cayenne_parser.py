@@ -89,7 +89,7 @@ class CayenneParser ():
                         "format": component.dictionary[LPP_DIGITAL_INPUT_NAME]["format"],
                         "subscribed":False,
                         "value": str(struct.unpack_from("B", decoded, offset)[0]),
-                        "id": LPP_DIGITAL_INPUT_NAME + "_" + str(channel),
+                        "id": LPP_DIGITAL_INPUT_NAME ,
                         "unit": component.dictionary[LPP_DIGITAL_INPUT_NAME]["unit"],
                         "lastUpdate": str(timestamp)
                      })             
@@ -102,7 +102,7 @@ class CayenneParser ():
                         "format": component.dictionary[LPP_DIGITAL_OUTPUT_NAME]["format"],
                         "subscribed":False,
                         "value": str(struct.unpack_from("B", decoded, offset)[0]),
-                        "id": LPP_DIGITAL_OUTPUT_NAME + "_" + str(channel),
+                        "id": LPP_DIGITAL_OUTPUT_NAME ,
                         "unit": component.dictionary[LPP_DIGITAL_OUTPUT_NAME]["unit"],
                         "lastUpdate": str(timestamp)
                      })             
@@ -115,7 +115,7 @@ class CayenneParser ():
                         "format": component.dictionary[LPP_ANALOG_INPUT_NAME]["format"],
                         "subscribed":False,
                         "value": str(struct.unpack_from(">h", decoded, offset)[0] / 100.0 ),
-                        "id": LPP_ANALOG_INPUT_NAME + "_" + str(channel),
+                        "id": LPP_ANALOG_INPUT_NAME ,
                         "unit": component.dictionary[LPP_ANALOG_INPUT_NAME]["unit"],
                         "lastUpdate": str(timestamp)
                      })             
@@ -128,7 +128,7 @@ class CayenneParser ():
                         "format": component.dictionary[LPP_ANALOG_OUTPUT_NAME]["format"],
                         "subscribed":False,
                         "value": str(struct.unpack_from(">h", decoded, offset)[0] / 100.0 ),
-                        "id": LPP_ANALOG_OUTPUT_NAME + "_" + str(channel),
+                        "id": LPP_ANALOG_OUTPUT_NAME ,
                         "unit": component.dictionary[LPP_ANALOG_OUTPUT_NAME]["unit"],
                         "lastUpdate": str(timestamp)
                      })             
@@ -141,7 +141,7 @@ class CayenneParser ():
                         "format": component.dictionary[LPP_LUMINOSITY_NAME]["format"],
                         "subscribed":False,
                         "value": str(struct.unpack_from(">h", decoded, offset)[0]),
-                        "id": LPP_LUMINOSITY_NAME + "_" + str(channel),
+                        "id": LPP_LUMINOSITY_NAME ,
                         "unit": component.dictionary[LPP_LUMINOSITY_NAME]["unit"],
                         "lastUpdate": str(timestamp)
                      })             
@@ -154,7 +154,7 @@ class CayenneParser ():
                         "format": component.dictionary[LPP_PRESENCE_NAME]["format"],
                         "subscribed":False,
                         "value": str(struct.unpack_from("?", decoded, offset)[0]),
-                        "id": LPP_PRESENCE_NAME + "_" + str(channel),
+                        "id": LPP_PRESENCE_NAME ,
                         "unit": component.dictionary[LPP_PRESENCE_NAME]["unit"],
                         "lastUpdate": str(timestamp)
                      })
@@ -167,7 +167,7 @@ class CayenneParser ():
                         "format": component.dictionary[LPP_TEMPERATURE_NAME]["format"],
                         "subscribed":False,
                         "value": str(struct.unpack_from(">h", decoded, offset)[0] / 10.0 ),
-                        "id": LPP_TEMPERATURE_NAME + "_" + str(channel),
+                        "id": LPP_TEMPERATURE_NAME ,
                         "unit": component.dictionary[LPP_TEMPERATURE_NAME]["unit"],
                         "lastUpdate": str(timestamp)
                      })
@@ -180,7 +180,7 @@ class CayenneParser ():
                         "format": component.dictionary[LPP_RELATIVE_HUMIDITY_NAME]["format"],
                         "subscribed":False,
                         "value": str(struct.unpack_from("B", decoded, offset)[0]  / 2.0),
-                        "id": LPP_RELATIVE_HUMIDITY_NAME + "_" + str(channel),
+                        "id": LPP_RELATIVE_HUMIDITY_NAME ,
                         "unit": component.dictionary[LPP_RELATIVE_HUMIDITY_NAME]["unit"],
                         "lastUpdate": str(timestamp)
                      })             
@@ -193,7 +193,7 @@ class CayenneParser ():
                         "format": component.dictionary[LPP_ACCELEROMETER_NAME]["format"],
                         "subscribed":False,
                         "value": str(struct.unpack_from(">h", decoded, offset)[0] / 1000.0),
-                        "id": LPP_ACCELEROMETER_NAME +"X_" + str(channel),
+                        "id": LPP_ACCELEROMETER_NAME + "X",
                         "unit": component.dictionary[LPP_ACCELEROMETER_NAME]["unit"],
                         "lastUpdate": str(timestamp)
                      })
@@ -201,7 +201,7 @@ class CayenneParser ():
                         "format": component.dictionary[LPP_ACCELEROMETER_NAME]["format"],
                         "subscribed":False,
                         "value": struct.unpack_from(">h", decoded, offset + 2)[0] / 1000.0,
-                        "id": LPP_ACCELEROMETER_NAME +"Y_" + str(channel),
+                        "id": LPP_ACCELEROMETER_NAME + "Y",
                         "unit": component.dictionary[LPP_ACCELEROMETER_NAME]["unit"],
                         "lastUpdate": str(timestamp)
                      })
@@ -209,7 +209,7 @@ class CayenneParser ():
                         "format": component.dictionary[LPP_ACCELEROMETER_NAME]["format"],
                         "subscribed":False,
                         "value": struct.unpack_from(">h", decoded, offset + 4)[0] / 1000.0,
-                        "id": LPP_ACCELEROMETER_NAME +"Z_" + str(channel),
+                        "id": LPP_ACCELEROMETER_NAME + "Z",
                         "unit": component.dictionary[LPP_ACCELEROMETER_NAME]["unit"],
                         "lastUpdate": str(timestamp)
                      })
@@ -222,7 +222,7 @@ class CayenneParser ():
                         "format": component.dictionary[LPP_RELATIVE_HUMIDITY_NAME]["format"],
                         "subscribed":False,
                         "value": str(struct.unpack_from(">h", decoded, offset)[0] / 10.0),
-                        "id": LPP_BAROMETRIC_PRESSURE_NAME + "_" + str(channel),
+                        "id": LPP_BAROMETRIC_PRESSURE_NAME ,
                         "unit": component.dictionary[LPP_BAROMETRIC_PRESSURE_NAME]["unit"],
                         "lastUpdate": str(timestamp)
                      })                                   
@@ -235,7 +235,7 @@ class CayenneParser ():
                         "format": component.dictionary[LPP_GYROMETER_NAME]["format"],
                         "subscribed":False,
                         "value": str(struct.unpack_from(">h", decoded, offset)[0] / 100.0),
-                        "id": LPP_GYROMETER_NAME +"X_" + str(channel),
+                        "id": LPP_GYROMETER_NAME + "X",
                         "unit": component.dictionary[LPP_GYROMETER_NAME]["unit"],
                         "lastUpdate": str(timestamp)
                      })
@@ -243,7 +243,7 @@ class CayenneParser ():
                         "format": component.dictionary[LPP_GYROMETER_NAME]["format"],
                         "subscribed":False,
                         "value": struct.unpack_from(">h", decoded, offset + 2)[0] / 100.0,
-                        "id": LPP_GYROMETER_NAME +"Y_" + str(channel),
+                        "id": LPP_GYROMETER_NAME + "",
                         "unit": component.dictionary[LPP_GYROMETER_NAME]["unit"],
                         "lastUpdate": str(timestamp)
                      })
@@ -251,7 +251,7 @@ class CayenneParser ():
                         "format": component.dictionary[LPP_GYROMETER_NAME]["format"],
                         "subscribed":False,
                         "value": struct.unpack_from(">h", decoded, offset + 4)[0] / 100.0,
-                        "id": LPP_GYROMETER_NAME +"Z_" + str(channel),
+                        "id": LPP_GYROMETER_NAME +"Z",
                         "unit": component.dictionary[LPP_GYROMETER_NAME]["unit"],
                         "lastUpdate": str(timestamp)
                      })
@@ -264,7 +264,7 @@ class CayenneParser ():
                         "format": component.dictionary["Latitude"]["format"],
                         "subscribed":False,
                         "value": str(self.readInt24BR(decoded, offset) / 10000.0),
-                        "id": "Latitude_" + str(channel),
+                        "id": "Latitude",
                         "unit": component.dictionary["Latitude"]["unit"],
                         "lastUpdate": str(timestamp)
                      })
@@ -272,7 +272,7 @@ class CayenneParser ():
                         "format": component.dictionary["Longitude"]["format"],
                         "subscribed":False,
                         "value": str(self.readInt24BR(decoded, offset + 3) / 10000.0),
-                        "id": "Longitude_" + str(channel),
+                        "id": "Longitude" ,
                         "unit": component.dictionary["Longitude"]["unit"],
                         "lastUpdate": str(timestamp)
                      })
@@ -280,7 +280,7 @@ class CayenneParser ():
                         "format": component.dictionary["Altitude"]["format"],
                         "subscribed":False,
                         "value": str(self.readInt24BR(decoded, offset + 6) / 100.0),
-                        "id": "Altitude_" + str(channel),
+                        "id": "Altitude",
                         "unit": component.dictionary["Altitude"]["unit"],
                         "lastUpdate": str(timestamp)
                      })

@@ -25,8 +25,10 @@ class DummyListener (threading.Thread):
 
    def SendDummyData(self):             
 
+      # print ("----------")
+
       print(datetime.datetime.now(), "Dummy data sent")
-      self._active_timer = threading.Timer(10.0, self.SendDummyData)                              
+      self._active_timer = threading.Timer(1.0, self.SendDummyData)                              
       self._active_timer.start()
 
       last_record = {  
