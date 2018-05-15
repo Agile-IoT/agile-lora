@@ -29,7 +29,7 @@ import logging
 # -----------------------
 
 # --- Variables ---------
-LOGLEVEL = logging.INFO       # DEBUG, INFO, WARNING, ERROR, CRITICAL
+LOGLEVEL = logging.DEBUG       # DEBUG, INFO, WARNING, ERROR, CRITICAL
 mainloop = GLib.MainLoop()
 # -----------------------
 
