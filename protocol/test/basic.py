@@ -1,14 +1,4 @@
-
-#################################################################
-#   Copyright (C) 2018  
-#   This program and the accompanying materials are made
-#   available under the terms of the Eclipse Public License 2.0
-#   which is available at https://www.eclipse.org/legal/epl-2.0/ 
-#   SPDX-License-Identifier: EPL-2.0
-#   Contributors: ATOS
-################################################################# 
-
-#!/usr/bin/env python3
+#! /usr/bin/python3
 
 import sys
 sys.path.append('../config/')
@@ -19,16 +9,18 @@ import dbus.service
 import time
 from queue import Queue
 import threading
+import struct
 
 try:
-  bus = dbus.SessionBus()
-  eth0 = bus.get_object( globals.BUS_NAME, globals.BUS_PATH + "/LoRa")
-  interface = dbus.Interface (eth0, "org.eclipse.agail.protocol")
+  bus = dbus.SessionBus() 
+  
+  eth0 = bus.get_object( globals.BUS_NAME, globals.OPATH)
+  interface = dbus.Interface (eth0, "org.eclipse.agail.Protocol")
   
   print ("---INTROSPECTION---")
   print (eth0.Introspect())
   print ("---Connect new device---")
-  print (interface.Connect("3339343771356214"))
+  print (eth0.Connect("3339343771356214"))
   print ("---Get Devices---")
   print (interface.Devices())
   print ("---Get Protocol Name---")
@@ -43,15 +35,22 @@ try:
   interface.StopDiscovery()
   print ("---Get Discovery Status---")
   print(interface.DiscoveryStatus())
-
-  print("---GET DATA---")
+  print("---GET LAST RECORD---")
   print(interface.Data())
+  print ("---GET DEVICES---")  
+  print(interface.Devices()) 
+  print ("---GET DEVICE STATUS---")  
+  print(interface.DeviceStatus("3339343771356214"))   
+  print ("---GET LAST VALUE FROM A PARTICULAR DEVICE---")  
+  temp = interface.Read("3339343771356214", {"id": "Temperature"})
+  print(temp)
+  print (struct.unpack('f', bytes(temp)))
 
-  print ("---GET DEVICES---")
-  devices = interface.Devices()
-  print(devices)
-  
-  # interface.connect_to_signal("Test", hello_signal_handler, dbus_interface="com.example.TestService", arg0="Hello")  
+  print ("---Subscribe---")  
+  print (interface.Subscribe("3339343771356214", {"id": "Temperature"}))
+
+  print ("---Unsubscribe---")  
+  print (interface.Unsubscribe("3339343771356214", {"id": "Temperature"}))    
   
 except Exception as err:
   print("Error -- {}".format(err))

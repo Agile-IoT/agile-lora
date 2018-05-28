@@ -9,12 +9,14 @@
 #   Contributors: ATOS
 ################################################################# 
 
+
 # --- Imports -----------
 import sys
 sys.path.append('config/')
 sys.path.append('mqtt/')
 sys.path.append('utils/')
 
+import logging
 from gi.repository import GLib
 import dbus
 import dbus.service
@@ -25,11 +27,10 @@ import threading
 from config import globals as globals
 from mqtt_client import MqttClient 
 from dbus_protocols import lora as lora_protocol
-import logging
 # -----------------------
 
 # --- Variables ---------
-LOGLEVEL = logging.DEBUG       # DEBUG, INFO, WARNING, ERROR, CRITICAL
+LOGLEVEL = logging.INFO       # DEBUG, INFO, WARNING, ERROR, CRITICAL
 mainloop = GLib.MainLoop()
 # -----------------------
 

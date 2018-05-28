@@ -23,11 +23,8 @@ class DummyListener (threading.Thread):
       self._thread.daemon = True
       self._thread.start() 
 
-   def SendDummyData(self):             
-
-      # print ("----------")
-
-      print(datetime.datetime.now(), "Dummy data sent")
+   def SendDummyData(self):                   
+      
       self._active_timer = threading.Timer(1.0, self.SendDummyData)                              
       self._active_timer.start()
 

@@ -11,16 +11,20 @@ import enum
 from queue import Queue
 
 #Global variables
-BASE_NAME="org.eclipse.agail"
-BASE_PATH="/org/eclipse/agail"
+# BUS_NAME = "org.eclipse.agail.Protocol"
+# # BUS_NAME = "org.eclipse.agail.protocol.LoRa"
+# BUS_DESTINATION = "org.eclipse.agail.protocol.LoRa"
+# BUS_PATH = "/org/eclipse/agail/protocol/LoRa"
 
-BUS_NAME = BASE_NAME + ".protocol"
-BUS_PATH = BASE_PATH + "/protocol"
+# LoRa Protocol
+OPATH = "/org/eclipse/agail/protocol/LoRa"
+IFACE = "org.eclipse.agail.Protocol"
+BUS_NAME = "org.eclipse.agail.protocol.LoRa"
 
-NEW_DEVICE_SIGNAL_NAME= BASE_NAME + ".NewDevice"
-NEW_DEVICE_SIGNAL_PATH = "/org/eclipse/agail/NewDevice"
-NEW_RECORD_SIGNAL_NAME= BASE_NAME + ".NewRecord"
-NEW_RECORD_SIGNAL_PATH = "/org/eclipse/agail/NewRecord"
+# Protocol Manager signal emitter
+PM_OPATH = "/org/eclipse/agail/NewDevice"
+PM_IFACE = "org.eclipse.agail.ProtocolManager"
+PM_BUS_NAME = "org.eclipse.agail.ProtocolManager"
 
 # Queue
 queue = Queue()
@@ -36,7 +40,7 @@ class DEVICE_STATUS(enum.Enum):
 class STATUS_TYPE(enum.Enum):
     CONNECTED = 1
     DISCONNECTED = 2
-    AVAILABLE = 2
+    AVAILABLE = 3
 
 class DISCOVERY_STATUS(enum.Enum):
    RUNNING = 1
