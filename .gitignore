@@ -106,3 +106,4 @@ protocol/.vscode/
 #others
 #protocol/mqtt/mqtt_client.py
 protocol/config/mqtt_conf.py
+.vscode/

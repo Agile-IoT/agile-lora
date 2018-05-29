@@ -84,8 +84,7 @@ class TtnClient (threading.Thread):
                   "format": "float",
                   "subscribed": False,
                   "lastUpdate": raw['metadata']['time']       
-            }
-            )                                    
+            })                                          
 
             globals.queue.put(data)
             self._logger.info("Message received")     

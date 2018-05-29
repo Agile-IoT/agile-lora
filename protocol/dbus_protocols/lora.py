@@ -298,8 +298,7 @@ class LoRaWAN(dbus.service.Object):
             if (hit_2 != None):      
                   if (hit_2["subscribed"] == True):  # Change to True after testing                           
                         value = self.SerializeValue(item["format"], item["value"])
-                        self.NewRecordSignal(value, id, {"id": item["id"]})
-                        
+                        self.NewRecordSignal(value, id, {"id": item["id"]})                        
 
    def SaveLastRecordObject(self, record, component):
       self._last_record = {
@@ -332,7 +331,7 @@ class LoRaWAN(dbus.service.Object):
       if (value_type == "integer"):
             output = bytearray((value).to_bytes(4, int(value)))            
       elif (value_type == "float"):            
-            output = bytearray(struct.pack("f", float(value))) 
+            output = bytearray(struct.pack(">f", float(value))) 
       elif (value_type == "string"):
             output = value.encode()
       else:

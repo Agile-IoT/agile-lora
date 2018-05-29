@@ -2,12 +2,14 @@
 
 import globals as globals
 import mqtt_conf 
+import components_dictionary as component
 
 import cayenne_parser
 
 import time, datetime, pytz, ciso8601
 from queue import Queue
 import paho.mqtt.client as mqtt
+import mqtt_conf 
 import threading
 import logging
 
@@ -70,14 +72,11 @@ class LoRaServerClient (threading.Thread):
          "connected": False,
          "status": globals.STATUS_TYPE['AVAILABLE'].name         
       } 
-
       streams = self._cayenne.decodeCayenneLpp(raw["data"], str(raw["rxInfo"][0]["time"]))                 
-      data["streams"] = streams     
-
-      print(data)
-
+      data["streams"] = streams   
       globals.queue.put(data)
 
+      print(data)
 
    def Start(self):
       self._logger.info("LoRaServer client thread instanced")        
@@ -89,7 +88,7 @@ class LoRaServerClient (threading.Thread):
       mqttc.on_subscribe = self.on_subscribe
 
       mqttc.username_pw_set(mqtt_conf.APPID, mqtt_conf.PSW)
-      mqttc.connect(mqtt_conf.URL, 1883, 60)        
+      mqttc.connect(mqtt_conf.URL, 1883, 60)              
 
       # and listen to server
       run = True
@@ -107,43 +106,48 @@ class LoRaServerClient (threading.Thread):
 
       data = {
          "deviceID": raw["dev_id"],
-         "hardwareID": raw["hardware_serial"],            
-         # "lastUpdate": raw['metadata']['time'],
-         # "lastUpdateTs": int(time.mktime(ciso8601.parse_datetime(raw['metadata']['time']).timetuple())),
+         "hardwareID": raw["hardware_serial"],                     
          "streams": [
          ],
          "connected": False,
          "status": globals.STATUS_TYPE['AVAILABLE'].name, 
          "test": 23123       
-      }    
+      }   
 
-      # Parse the payload field 
-      for key in raw['payload_fields']:  
-         temp = {
-               "id": "",
-               "value": str(raw['payload_fields'][key]),
-               "unit": "",
-               "format": "",
-               "subscribed": False,
-               "lastUpdate": raw['metadata']['time'],
-               }
-         aux = key.split("_")
-         temp['id'] = '_'.join(aux[0:len(aux)-1]).title()
-         
-         #Asserts needed here
-         temp['unit']= component.dictionary[temp['id']]['unit']
-         temp['format']= component.dictionary[temp['id']]['format']        
-         data['streams'].append(temp)    
-         
-      # More data that can be parsed 
-      data['streams'].append({
-               "id": "SNR",
-               "value": raw['metadata']['gateways'][0]['snr'],
-               "unit": "dB",
-               "format": "float",
-               "subscribed": False            
-         }
-      )                  
+      if mqtt_conf.PAYLOAD == "clear":
+            # Parse the payload field --> Parser to be done (this is TTN's)
+            for key in raw['payload_fields']:  
+                  temp = {
+                        "id": "",
+                        "value": str(raw['payload_fields'][key]),
+                        "unit": "",
+                        "format": "",
+                        "subscribed": False,
+                        "lastUpdate": raw['metadata']['time'],
+                        }
+                  aux = key.split("_")
+                  temp['id'] = '_'.join(aux[0:len(aux)-1]).title()
+                  
+                  #Asserts needed here
+                  temp['unit']= component.dictionary[temp['id']]['unit']
+                  temp['format']= component.dictionary[temp['id']]['format']        
+                  data['streams'].append(temp)    
+                  
+            # More data that can be parsed 
+            # data['streams'].append({
+            #       "id": "SNR",
+            #       "value": raw['metadata']['gateways'][0]['snr'],
+            #       "unit": "dB",
+            #       "format": "float",
+            #       "subscribed": False            
+            #       }
+            # ) 
+      elif mqtt_conf.PAYLOAD == "base64":            
+            streams = self._cayenne.decodeCayenneLpp(raw["data"], str(raw["rxInfo"][0]["time"]))                 
+            data["streams"] = streams 
+      else:    
+            raise ValueError('Payload type ' + mqtt_conf.PAYLOAD + ' not valid')
+                    
       globals.queue.put(data)
       self._logger.info("Message received")          
 

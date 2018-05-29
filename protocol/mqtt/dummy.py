@@ -94,23 +94,10 @@ class DummyListener (threading.Thread):
          ]            
       }       
 
-      # #BASE 64 handling (for Cayenne payload)
-      # print("-----")
-      # c = base64.b64decode("AmcA7QNoTw==")
 
-      # print (c.hex())
-      
-      # out = struct.unpack_from('HHH', c, 0)
-      # print (out)
+      print(last_record)
 
-      # for b in c:
-      #    # print (hex(b))
-      #    print(b)
-         
-      # print("-----")
-      # print (c[5])
-        
-        #Temporal notification -- invoke a DBUS method
+      #Temporal notification -- invoke a DBUS method
       globals.queue.put(last_record)    
 
    def TearDown(self):               

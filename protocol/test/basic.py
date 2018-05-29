@@ -43,12 +43,10 @@ try:
   print(interface.DeviceStatus("3339343771356214"))   
   print ("---GET LAST VALUE FROM A PARTICULAR DEVICE---")  
   temp = interface.Read("3339343771356214", {"id": "Temperature"})
-  print(temp)
+  print("Temperature = " + str(temp))
   print (struct.unpack('f', bytes(temp)))
-
   print ("---Subscribe---")  
   print (interface.Subscribe("3339343771356214", {"id": "Temperature"}))
-
   print ("---Unsubscribe---")  
   print (interface.Unsubscribe("3339343771356214", {"id": "Temperature"}))    
   
