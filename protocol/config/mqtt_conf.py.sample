@@ -1,4 +1,4 @@
-APP_SERVER = "TTN"  # Current options handled ("TTN", "Dummy", "LoRaServer")
+APP_SERVER = "TTN"  # Current options handled ("TTN", "LoRaServer")
 APPID  = "ttn_appId"
 PSW    = 'ttn-account-v2.uuid'
 URL = 'eu.thethings.network'

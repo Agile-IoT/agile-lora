@@ -25,14 +25,12 @@ class MqttClient():
             if (mqtt_conf.APP_SERVER == "TTN"):
                 self._listener = ttn_client.TtnClient()        
             elif (mqtt_conf.APP_SERVER == "LoRaServer"):  
-                self._listener = loraserver_client.LoRaServerClient()    
-            elif (mqtt_conf.APP_SERVER == "Dummy"):            
-                self._listener = dummy.DummyListener()    
+                self._listener = loraserver_client.LoRaServerClient()               
             else: 
                 self._listener = None
-                raise KeyError("Application server not found - " + mqtt_conf.APP_SERVER)                
+                raise NameError("Application server not found - " + mqtt_conf.APP_SERVER)                
         except:                                
-            raise ValueError("Something happened with the connection to the MQTT Server")                
+            raise RuntimeError("Something happened with the connection to the MQTT Server")                
 
 
     def TearDown(self):      
