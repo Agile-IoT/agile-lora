@@ -6,7 +6,7 @@
 #   available under the terms of the Eclipse Public License 2.0
 #   which is available at https://www.eclipse.org/legal/epl-2.0/ 
 #   SPDX-License-Identifier: EPL-2.0
-#   Contributors: ATOS
+#   Contributors: ATOS SPAIN S.A.
 ################################################################# 
 
 
@@ -30,7 +30,7 @@ from dbus_protocols import lora as lora_protocol
 # -----------------------
 
 # --- Variables ---------
-LOGLEVEL = logging.INFO       # DEBUG, INFO, WARNING, ERROR, CRITICAL
+LOGLEVEL = logging.DEBUG       # DEBUG, INFO, WARNING, ERROR, CRITICAL
 mainloop = GLib.MainLoop()
 # -----------------------
 
@@ -51,9 +51,8 @@ def dbusLoop():
          pass
       endProgram(0)
    
-def endProgram(status):
-   print ("DBus service stopped")   
-
+def endProgram(status):   
+   logging.debug("DBus service stopped")
    sys.exit(status)
 # -----------------------
 

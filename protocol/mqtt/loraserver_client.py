@@ -1,9 +1,15 @@
-#! /usr/bin/python3
+#################################################################
+#   Copyright (C) 2018  
+#   This program and the accompanying materials are made
+#   available under the terms of the Eclipse Public License 2.0
+#   which is available at https://www.eclipse.org/legal/epl-2.0/ 
+#   SPDX-License-Identifier: EPL-2.0
+#   Contributors: ATOS Spain S
+################################################################# 
 
 import globals as globals
 import mqtt_conf 
 import components_dictionary as component
-
 import cayenne_parser
 
 import time, datetime, pytz, ciso8601
@@ -12,6 +18,7 @@ import paho.mqtt.client as mqtt
 import mqtt_conf 
 import threading
 import logging
+import json
 
 # Testing
 import base64
@@ -31,7 +38,7 @@ class LoRaServerClient (threading.Thread):
       
       self._active_timer = threading.Timer(6, self.TestParser)                              
       self._active_timer.start()
-
+      
       raw = {
             "applicationID": "1",
             "applicationName": "my-app",
@@ -75,8 +82,8 @@ class LoRaServerClient (threading.Thread):
       streams = self._cayenne.decodeCayenneLpp(raw["data"], str(raw["rxInfo"][0]["time"]))                 
       data["streams"] = streams   
       globals.queue.put(data)
-
-      print(data)
+      
+      self._logger.info("Message received - " + json.dumps(data))          
 
    def Start(self):
       self._logger.info("LoRaServer client thread instanced")        
@@ -95,9 +102,10 @@ class LoRaServerClient (threading.Thread):
       while run:
          mqttc.loop()
 
-   def on_connect (self, mqttc, mosq, obj, rc):
-      print("Connected with result code:" + str(rc))
-      # subscribe for all devices of user
+   def on_connect (self, mqttc, mosq, obj, rc):      
+      self._logger.info("Connected with result code:" + str(rc))          
+      
+      # subscribe for all devices of user (tailor to every MQTT Broker)
       mqttc.subscribe('+/devices/+/up')    
 
    def on_message (self, mqttc,obj,msg):      
@@ -110,8 +118,7 @@ class LoRaServerClient (threading.Thread):
          "streams": [
          ],
          "connected": False,
-         "status": globals.STATUS_TYPE['AVAILABLE'].name, 
-         "test": 23123       
+         "status": globals.STATUS_TYPE['AVAILABLE'].name               
       }   
 
       if mqtt_conf.PAYLOAD == "clear":
@@ -142,6 +149,7 @@ class LoRaServerClient (threading.Thread):
             #       "subscribed": False            
             #       }
             # ) 
+            
       elif mqtt_conf.PAYLOAD == "base64":            
             streams = self._cayenne.decodeCayenneLpp(raw["data"], str(raw["rxInfo"][0]["time"]))                 
             data["streams"] = streams 
@@ -149,19 +157,19 @@ class LoRaServerClient (threading.Thread):
             raise ValueError('Payload type ' + mqtt_conf.PAYLOAD + ' not valid')
                     
       globals.queue.put(data)
-      self._logger.info("Message received")          
+      self._logger.debug("Message received")          
 
    def on_publish(self, mosq, obj, mid):
-      # print("mid: " + str(mid))
+      self._logger.debug("mid: " + str(mid))
       pass
 
    def on_subscribe(self, mosq, obj, mid, granted_qos):
-      # print("Subscribed: " + str(mid) + " " + str(granted_qos))
+      self._logger.debug("Subscribed: " + str(mid) + " " + str(granted_qos))
       pass
 
    def on_log(self, mqttc,obj,level,buf):
-      # print("message:" + str(buf))
-      # print("userdata:" + str(obj))   
+      self._logger.debugrint("message:" + str(buf))
+      self._logger.debug("userdata:" + str(obj))   
       pass
 
    def TearDown(self):               

@@ -4,7 +4,7 @@
 #   available under the terms of the Eclipse Public License 2.0
 #   which is available at https://www.eclipse.org/legal/epl-2.0/ 
 #   SPDX-License-Identifier: EPL-2.0
-#   Contributors: ATOS
+#   Contributors: ATOS SPAIN S.A.
 ################################################################# 
 
 # --- Imports -----------
@@ -93,28 +93,28 @@ class LoRaWAN(dbus.service.Object):
 
    ### START DISCOVERY
    @dbus.service.method(globals.IFACE, in_signature="", out_signature="")
-   def StartDiscovery(self):      
-      
+   def StartDiscovery(self):            
       if (self._discovery_status.name == "NONE"):         
          self._discovery_status = globals.DISCOVERY_STATUS["RUNNING"] 
-         self._logger.info("LoRa StartDiscovery - " + self._discovery_status.name)
+         self._logger.debug("LoRa StartDiscovery - " + self._discovery_status.name)
          self.Discovery()           
       else: 
-         self._logger.info("Protocol discovery already on") 
+         self._logger.debug("Protocol discovery already on") 
 
    ### STOP DISCOVERY
    @dbus.service.method(globals.IFACE, in_signature="", out_signature="")
    def StopDiscovery(self):        
-      if (self._discovery_status.name == "RUNNING"):         
-         self._task_discovery.cancel()
+      if (self._discovery_status.name == "RUNNING"):      
+         if (isinstance(self._task_discovery, threading.Timer)):
+            self._task_discovery.cancel()            
          self._discovery_status = globals.DISCOVERY_STATUS["NONE"]
-         self._logger.info("LoRa StopDiscovery - " + self._discovery_status.name)
+         self._logger.debug("LoRa StopDiscovery - " + self._discovery_status.name)
       else:
-          self._logger.info("Protocol discovery already off") 
+          self._logger.debug("Protocol discovery already off") 
 
    ### DISCOVERY STATUS
    @dbus.service.method(globals.IFACE, in_signature="", out_signature="s")
-   def DiscoveryStatus(self):                
+   def DiscoveryStatus(self):                    
       return self._discovery_status.name
 
    #Returns list discovered protocol devicesdevices
@@ -206,8 +206,7 @@ class LoRaWAN(dbus.service.Object):
                   ProtocolException("Component " + profile['id']+ " not found (subscription to device ID) " + device_id)                     
       else:
             ProtocolException("Component not found (subscription to device ID) " + device_id)                 
-            print ("sdfsdfs")
-
+            
    @dbus.service.method(globals.IFACE, in_signature="sa{ss}", out_signature="")
    def Unsubscribe(self, device_id, profile):
       hit_1 = pydash.find(self._devices_list, {"hardwareID": device_id})
@@ -232,12 +231,12 @@ class LoRaWAN(dbus.service.Object):
       
       #Discovery tasks - First version -> Discover all devices
       if (self._discovery_status == globals.DISCOVERY_STATUS["RUNNING"]):   
-
+            
             # Need to get the list of discovered devices and send the signal only in case of a new one
-            self._protocol_manager.GetDevices()
+            self._protocol_manager.GetDevices()            
 
             # Send signal only in case of a new device
-            for item in self._devices_list:                          
+            for item in self._devices_list:                                        
                if (self._protocol_manager.DeviceDiscovered(item["hardwareID"]) < 0):
                   self._protocol_manager.FoundNewDeviceSignal([item["hardwareID"], 
                   globals.BUS_NAME, item["deviceID"], item["status"]])                   
@@ -363,6 +362,8 @@ class ProtocolManager(dbus.service.Object):
       self._interface = dbus.Interface (temp, "org.eclipse.agail.ProtocolManager")      
    
    def GetDevices(self):
+
+      print(len(self._devices))
       if (len(self._devices)):
          self._devices = []        
 

@@ -1,4 +1,11 @@
-#! /usr/bin/python3
+#################################################################
+#   Copyright (C) 2018  
+#   This program and the accompanying materials are made
+#   available under the terms of the Eclipse Public License 2.0
+#   which is available at https://www.eclipse.org/legal/epl-2.0/ 
+#   SPDX-License-Identifier: EPL-2.0
+#   Contributors: ATOS SPAIN S.A.
+################################################################# 
 
 import globals as globals
 import mqtt_conf 
@@ -39,12 +46,12 @@ class TtnClient (threading.Thread):
       while run:
          mqttc.loop()
 
-   def on_connect (self, mqttc, mosq, obj, rc):
-      print("Connected with result code:" + str(rc))
+   def on_connect (self, mqttc, mosq, obj, rc):      
+      self._logger.info("Connected with result code:" + str(rc))          
       # subscribe for all devices of user
       mqttc.subscribe('+/devices/+/up')    
 
-   def on_message (self, mqttc,obj,msg):      
+   def on_message (self, mqttc,obj,msg):       
 
       raw = json.loads(msg.payload.decode())     
 
@@ -85,21 +92,20 @@ class TtnClient (threading.Thread):
                   "subscribed": False,
                   "lastUpdate": raw['metadata']['time']       
             })                                          
-
+            
+            self._logger.info("Message received - " + json.dumps(data))   
             globals.queue.put(data)
-            self._logger.info("Message received")     
-      else:
-            print("Message repeated")     
+            self._logger.info("Message received")           
 
-   def on_publish(self, mosq, obj, mid):
-      print("mid: " + str(mid))
+   def on_publish(self, mosq, obj, mid):      
+      self._logger.info("mid: " + str(mid))          
 
-   def on_subscribe(self, mosq, obj, mid, granted_qos):
-      print("Subscribed: " + str(mid) + " " + str(granted_qos))
+   def on_subscribe(self, mosq, obj, mid, granted_qos):      
+      self._logger.info("Subscribed: " + str(mid) + " " + str(granted_qos))          
 
    def on_log(self, mqttc,obj,level,buf):
-      print("message:" + str(buf))
-      print("userdata:" + str(obj))   
+      self._logger.info("message:" + str(buf))          
+      self._logger.info("userdata:" + str(obj))           
 
    def TearDown(self):               
       if (isinstance(self._active_timer, threading.Timer)):

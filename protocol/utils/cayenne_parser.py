@@ -1,3 +1,12 @@
+#################################################################
+#   Copyright (C) 2018  
+#   This program and the accompanying materials are made
+#   available under the terms of the Eclipse Public License 2.0
+#   which is available at https://www.eclipse.org/legal/epl-2.0/ 
+#   SPDX-License-Identifier: EPL-2.0
+#   Contributors: ATOS SPAIN S.A.
+################################################################# 
+
 import struct
 import logging
 import json
@@ -56,22 +65,6 @@ class CayenneParser ():
       output = []      
       decoded = base64.b64decode(input)              
       offset = 0            
-
-      # Testing
-      # dec = "036601046600"   #Presence
-      # dec = "067104D2FB2E0000" #Accelerometer
-      # dec = "068604D2FB2E0000" #Accelerometer
-      # dec = "018806765ff2960a0003e8"  # GPS
-      # decoded = bytearray.fromhex(dec)
-
-      # Testing 
-      # test = "036601046600"
-      # decoded= base64.b64encode(test.encode('utf-8'))
-      # print (decoded)
-
-      # for b in decoded:
-      # #    print (hex(b))
-      #    print(b)
       
       while (offset < len(decoded)):
          if (self.validateCayenneLppSize (input)):                        

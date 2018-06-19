@@ -10,12 +10,6 @@
 import enum
 from queue import Queue
 
-#Global variables
-# BUS_NAME = "org.eclipse.agail.Protocol"
-# # BUS_NAME = "org.eclipse.agail.protocol.LoRa"
-# BUS_DESTINATION = "org.eclipse.agail.protocol.LoRa"
-# BUS_PATH = "/org/eclipse/agail/protocol/LoRa"
-
 # LoRa Protocol
 OPATH = "/org/eclipse/agail/protocol/LoRa"
 IFACE = "org.eclipse.agail.Protocol"
