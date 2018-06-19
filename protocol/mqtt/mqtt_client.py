@@ -11,7 +11,6 @@ import os
 import sys
 import globals as globals
 import mqtt_conf 
-import dummy
 import ttn_client
 import loraserver_client
 import logging

@@ -29,8 +29,8 @@ class LoRaServerClient (threading.Thread):
       self._logger = logging.getLogger(globals.BUS_NAME)       
       self._cayenne =   cayenne_parser.CayenneParser()
       self._active_timer = {}      
-      # self._thread = threading.Thread(target=self.Start, name="LoRaServer_thread")
-      self._thread = threading.Thread(target=self.TestParser, name="LoRaServer_thread")
+      self._thread = threading.Thread(target=self.Start, name="LoRaServer_thread")
+      # self._thread = threading.Thread(target=self.TestParser, name="LoRaServer_thread")
       self._thread.daemon = True
       self._thread.start()    
 
@@ -80,6 +80,50 @@ class LoRaServerClient (threading.Thread):
          "status": globals.STATUS_TYPE['AVAILABLE'].name         
       } 
       streams = self._cayenne.decodeCayenneLpp(raw["data"], str(raw["rxInfo"][0]["time"]))                 
+
+      # Append data from the message (overhead) - static process
+      # i.e., SNR, RSSI, Latitude, Longitude, Altitude
+      streams.append ({
+         "format": component.dictionary["RSSI"]["format"],
+         "subscribed":False,
+         "value": raw["rxInfo"][0]["rssi"],
+         "id": "SNR",
+         "unit": component.dictionary["RSSI"]["unit"],
+         "lastUpdate": str(raw["rxInfo"][0]["time"])}
+      )
+      streams.append ({
+         "format": component.dictionary["SNR"]["format"],
+         "subscribed":False,
+         "value": raw["rxInfo"][0]["loRaSNR"],
+         "id": "SNR",
+         "unit": component.dictionary["SNR"]["unit"],
+         "lastUpdate": str(raw["rxInfo"][0]["time"])}
+      )
+      streams.append ({
+         "format": component.dictionary["Latitude"]["format"],
+         "subscribed":False,
+         "value": raw["rxInfo"][0]["latitude"],
+         "id": "SNR",
+         "unit": component.dictionary["Latitude"]["unit"],
+         "lastUpdate": str(raw["rxInfo"][0]["time"])}
+      )
+      streams.append ({
+         "format": component.dictionary["Longitude"]["format"],
+         "subscribed":False,
+         "value": raw["rxInfo"][0]["longitude"],
+         "id": "SNR",
+         "unit": component.dictionary["Longitude"]["unit"],
+         "lastUpdate": str(raw["rxInfo"][0]["time"])}
+      )
+      streams.append ({
+         "format": component.dictionary["Altitude"]["format"],
+         "subscribed":False,
+         "value": raw["rxInfo"][0]["altitude"],
+         "id": "SNR",
+         "unit": component.dictionary["Altitude"]["unit"],
+         "lastUpdate": str(raw["rxInfo"][0]["time"])}
+      )
+
       data["streams"] = streams   
       globals.queue.put(data)
       
@@ -155,6 +199,49 @@ class LoRaServerClient (threading.Thread):
             data["streams"] = streams 
       else:    
             raise ValueError('Payload type ' + mqtt_conf.PAYLOAD + ' not valid')
+
+       # Append data from the message (overhead) - static process
+      # i.e., SNR, RSSI, Latitude, Longitude, Altitude
+      data["streams"].append ({
+         "format": component.dictionary["RSSI"]["format"],
+         "subscribed":False,
+         "value": raw["rxInfo"][0]["rssi"],
+         "id": "SNR",
+         "unit": component.dictionary["RSSI"]["unit"],
+         "lastUpdate": str(raw["rxInfo"][0]["time"])}
+      )
+      data["streams"].append ({
+         "format": component.dictionary["SNR"]["format"],
+         "subscribed":False,
+         "value": raw["rxInfo"][0]["loRaSNR"],
+         "id": "SNR",
+         "unit": component.dictionary["SNR"]["unit"],
+         "lastUpdate": str(raw["rxInfo"][0]["time"])}
+      )
+      data["streams"].append ({
+         "format": component.dictionary["Latitude"]["format"],
+         "subscribed":False,
+         "value": raw["rxInfo"][0]["latitude"],
+         "id": "SNR",
+         "unit": component.dictionary["Latitude"]["unit"],
+         "lastUpdate": str(raw["rxInfo"][0]["time"])}
+      )
+      data["streams"].append ({
+         "format": component.dictionary["Longitude"]["format"],
+         "subscribed":False,
+         "value": raw["rxInfo"][0]["longitude"],
+         "id": "SNR",
+         "unit": component.dictionary["Longitude"]["unit"],
+         "lastUpdate": str(raw["rxInfo"][0]["time"])}
+      )
+      data["streams"].append ({
+         "format": component.dictionary["Altitude"]["format"],
+         "subscribed":False,
+         "value": raw["rxInfo"][0]["altitude"],
+         "id": "SNR",
+         "unit": component.dictionary["Altitude"]["unit"],
+         "lastUpdate": str(raw["rxInfo"][0]["time"])}
+      )
                     
       globals.queue.put(data)
       self._logger.debug("Message received")          

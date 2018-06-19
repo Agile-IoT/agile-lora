@@ -41,11 +41,11 @@ dictionary = {
     "format": "integer"
   },
   "Latitude": {
-    "unit": "Degrees (º)",
+    "unit": "Decimal Degrees (º)",
     "format": "float"
   },  
   "Longitude": {
-    "unit": "Degrees (º)",
+    "unit": "Decimal Degrees (º)",
     "format": "float"
   },
   "Altitude": {
