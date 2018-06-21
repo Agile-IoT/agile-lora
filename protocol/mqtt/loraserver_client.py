@@ -87,7 +87,7 @@ class LoRaServerClient (threading.Thread):
          "format": component.dictionary["RSSI"]["format"],
          "subscribed":False,
          "value": raw["rxInfo"][0]["rssi"],
-         "id": "SNR",
+         "id": "RSSI",
          "unit": component.dictionary["RSSI"]["unit"],
          "lastUpdate": str(raw["rxInfo"][0]["time"])}
       )
@@ -103,7 +103,7 @@ class LoRaServerClient (threading.Thread):
          "format": component.dictionary["Latitude"]["format"],
          "subscribed":False,
          "value": raw["rxInfo"][0]["latitude"],
-         "id": "SNR",
+         "id": "Latitude",
          "unit": component.dictionary["Latitude"]["unit"],
          "lastUpdate": str(raw["rxInfo"][0]["time"])}
       )
@@ -111,7 +111,7 @@ class LoRaServerClient (threading.Thread):
          "format": component.dictionary["Longitude"]["format"],
          "subscribed":False,
          "value": raw["rxInfo"][0]["longitude"],
-         "id": "SNR",
+         "id": "Longitude",
          "unit": component.dictionary["Longitude"]["unit"],
          "lastUpdate": str(raw["rxInfo"][0]["time"])}
       )
@@ -119,7 +119,7 @@ class LoRaServerClient (threading.Thread):
          "format": component.dictionary["Altitude"]["format"],
          "subscribed":False,
          "value": raw["rxInfo"][0]["altitude"],
-         "id": "SNR",
+         "id": "Altitude",
          "unit": component.dictionary["Altitude"]["unit"],
          "lastUpdate": str(raw["rxInfo"][0]["time"])}
       )

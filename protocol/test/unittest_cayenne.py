@@ -125,8 +125,7 @@ class TestStringMethods(unittest.TestCase):
         payload = "018604D2FB2E0000"
         b64 = codecs.encode(codecs.decode(payload, 'hex'), 'base64')
         cayenne = cayenne_parser.CayenneParser()        
-        out = cayenne.decodeCayenneLpp(b64, datetime.datetime.now())      
-        print(out)        
+        out = cayenne.decodeCayenneLpp(b64, datetime.datetime.now())              
 
         hit = pydash.find (out, {"id": "GyrometerX"})        
         self.assertTrue(hit)
