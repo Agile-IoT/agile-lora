@@ -236,7 +236,7 @@ class CayenneParser ():
                         "format": component.dictionary[LPP_GYROMETER_NAME]["format"],
                         "subscribed":False,
                         "value": struct.unpack_from(">h", decoded, offset + 2)[0] / 100.0,
-                        "id": LPP_GYROMETER_NAME + "",
+                        "id": LPP_GYROMETER_NAME + "Y",
                         "unit": component.dictionary[LPP_GYROMETER_NAME]["unit"],
                         "lastUpdate": str(timestamp)
                      })

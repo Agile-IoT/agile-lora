@@ -166,7 +166,7 @@ class LoRaServerClient (threading.Thread):
       }   
 
       if mqtt_conf.PAYLOAD == "clear":
-            # Parse the payload field --> Parser to be done (this is TTN's)
+            # Parse the payload field 
             for key in raw['payload_fields']:  
                   temp = {
                         "id": "",
@@ -182,17 +182,8 @@ class LoRaServerClient (threading.Thread):
                   #Asserts needed here
                   temp['unit']= component.dictionary[temp['id']]['unit']
                   temp['format']= component.dictionary[temp['id']]['format']        
-                  data['streams'].append(temp)    
-                  
-            # More data that can be parsed 
-            # data['streams'].append({
-            #       "id": "SNR",
-            #       "value": raw['metadata']['gateways'][0]['snr'],
-            #       "unit": "dB",
-            #       "format": "float",
-            #       "subscribed": False            
-            #       }
-            # ) 
+                  data['streams'].append(temp)                     
+
             
       elif mqtt_conf.PAYLOAD == "base64":            
             streams = self._cayenne.decodeCayenneLpp(raw["data"], str(raw["rxInfo"][0]["time"]))                 
@@ -247,17 +238,14 @@ class LoRaServerClient (threading.Thread):
       self._logger.debug("Message received")          
 
    def on_publish(self, mosq, obj, mid):
-      self._logger.debug("mid: " + str(mid))
-      pass
+      self._logger.debug("mid: " + str(mid))      
 
    def on_subscribe(self, mosq, obj, mid, granted_qos):
-      self._logger.debug("Subscribed: " + str(mid) + " " + str(granted_qos))
-      pass
+      self._logger.debug("Subscribed: " + str(mid) + " " + str(granted_qos))      
 
    def on_log(self, mqttc,obj,level,buf):
       self._logger.debugrint("message:" + str(buf))
-      self._logger.debug("userdata:" + str(obj))   
-      pass
+      self._logger.debug("userdata:" + str(obj))         
 
    def TearDown(self):               
       if (isinstance(self._active_timer, threading.Timer)):

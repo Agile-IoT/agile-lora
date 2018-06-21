@@ -24,8 +24,8 @@ class TestStringMethods(unittest.TestCase):
         payload = "010001"
         b64 = codecs.encode(codecs.decode(payload, 'hex'), 'base64')
         cayenne = cayenne_parser.CayenneParser()        
-        out = cayenne.decodeCayenneLpp(b64, datetime.datetime.now())                     
-        hit = pydash.find (out, {"id": "Digital_In_1"})        
+        out = cayenne.decodeCayenneLpp(b64, datetime.datetime.now())                                  
+        hit = pydash.find (out, {"id": "Digital_In"})        
         self.assertTrue(hit)
         self.assertTrue(int(hit["value"]) == 1)
 
@@ -34,7 +34,7 @@ class TestStringMethods(unittest.TestCase):
         b64 = codecs.encode(codecs.decode(payload, 'hex'), 'base64')
         cayenne = cayenne_parser.CayenneParser()        
         out = cayenne.decodeCayenneLpp(b64, datetime.datetime.now())                     
-        hit = pydash.find (out, {"id": "Digital_Out_1"})        
+        hit = pydash.find (out, {"id": "Digital_Out"})        
         self.assertTrue(hit)
         self.assertTrue(int(hit["value"]) == 1)
 
@@ -43,7 +43,7 @@ class TestStringMethods(unittest.TestCase):
         b64 = codecs.encode(codecs.decode(payload, 'hex'), 'base64')
         cayenne = cayenne_parser.CayenneParser()        
         out = cayenne.decodeCayenneLpp(b64, datetime.datetime.now())                     
-        hit = pydash.find (out, {"id": "Analog_In_1"})        
+        hit = pydash.find (out, {"id": "Analog_In"})        
         self.assertTrue(hit)        
         self.assertTrue(float(hit["value"]) == 32.45)
 
@@ -52,7 +52,7 @@ class TestStringMethods(unittest.TestCase):
         b64 = codecs.encode(codecs.decode(payload, 'hex'), 'base64')
         cayenne = cayenne_parser.CayenneParser()        
         out = cayenne.decodeCayenneLpp(b64, datetime.datetime.now())                     
-        hit = pydash.find (out, {"id": "Analog_Out_1"})        
+        hit = pydash.find (out, {"id": "Analog_Out"})        
         self.assertTrue(hit)        
         self.assertTrue(float(hit["value"]) == 32.45)
 
@@ -61,30 +61,26 @@ class TestStringMethods(unittest.TestCase):
         b64 = codecs.encode(codecs.decode(payload, 'hex'), 'base64')
         cayenne = cayenne_parser.CayenneParser()        
         out = cayenne.decodeCayenneLpp(b64, datetime.datetime.now())                    
-        hit = pydash.find (out, {"id": "Illuminance_1"})             
+        hit = pydash.find (out, {"id": "Illuminance"})             
         self.assertTrue(hit)
         self.assertTrue(int(hit["value"]) == 4095)
 
     def test_Presence (self):
-        payload = "016601026600"
+        payload = "016601"
         b64 = codecs.encode(codecs.decode(payload, 'hex'), 'base64')
         cayenne = cayenne_parser.CayenneParser()        
-        out = cayenne.decodeCayenneLpp(b64, datetime.datetime.now())     
+        out = cayenne.decodeCayenneLpp(b64, datetime.datetime.now())             
         
-        hit = pydash.find (out, {"id": "Presence_1"})        
+        hit = pydash.find (out, {"id": "Presence"})        
         self.assertTrue(hit)
         self.assertTrue(hit["value"] == "True")
-
-        hit = pydash.find (out, {"id": "Presence_2"})        
-        self.assertTrue(hit)
-        self.assertTrue(hit["value"] == "False")
 
     def test_Temperature (self):
         payload = "0167FFD7"
         b64 = codecs.encode(codecs.decode(payload, 'hex'), 'base64')
         cayenne = cayenne_parser.CayenneParser()        
         out = cayenne.decodeCayenneLpp(b64, datetime.datetime.now())                    
-        hit = pydash.find (out, {"id": "Temperature_1"})        
+        hit = pydash.find (out, {"id": "Temperature"})        
         self.assertTrue(hit)
         self.assertTrue(float(hit["value"]) == -4.1)
 
@@ -93,7 +89,7 @@ class TestStringMethods(unittest.TestCase):
         b64 = codecs.encode(codecs.decode(payload, 'hex'), 'base64')
         cayenne = cayenne_parser.CayenneParser()        
         out = cayenne.decodeCayenneLpp(b64, datetime.datetime.now())                    
-        hit = pydash.find (out, {"id": "Relative_Humidity_1"})        
+        hit = pydash.find (out, {"id": "Relative_Humidity"})        
         self.assertTrue(hit)
         self.assertTrue(float(hit["value"]) == 50.0)
 
@@ -103,15 +99,15 @@ class TestStringMethods(unittest.TestCase):
         cayenne = cayenne_parser.CayenneParser()        
         out = cayenne.decodeCayenneLpp(b64, datetime.datetime.now())                   
 
-        hit = pydash.find (out, {"id": "AccelerometerX_1"})        
+        hit = pydash.find (out, {"id": "AccelerometerX"})        
         self.assertTrue(hit)
         self.assertAlmostEqual(float(hit["value"]), 1.234, delta=0.1)
 
-        hit = pydash.find (out, {"id": "AccelerometerY_1"})        
+        hit = pydash.find (out, {"id": "AccelerometerY"})        
         self.assertTrue(hit)
         self.assertAlmostEqual(float(hit["value"]), -1.234, delta=0.1)
 
-        hit = pydash.find (out, {"id": "AccelerometerZ_1"})        
+        hit = pydash.find (out, {"id": "AccelerometerZ"})        
         self.assertTrue(hit)
         self.assertAlmostEqual(float(hit["value"]), 0.0, delta=0.1)
 
@@ -120,7 +116,7 @@ class TestStringMethods(unittest.TestCase):
         b64 = codecs.encode(codecs.decode(payload, 'hex'), 'base64')
         cayenne = cayenne_parser.CayenneParser()        
         out = cayenne.decodeCayenneLpp(b64, datetime.datetime.now())                     
-        hit = pydash.find (out, {"id": "Barometric_Pressure_1"})                
+        hit = pydash.find (out, {"id": "Barometric_Pressure"})                
 
         self.assertTrue(hit)
         self.assertTrue(float(hit["value"]) == 18.6)
@@ -129,17 +125,18 @@ class TestStringMethods(unittest.TestCase):
         payload = "018604D2FB2E0000"
         b64 = codecs.encode(codecs.decode(payload, 'hex'), 'base64')
         cayenne = cayenne_parser.CayenneParser()        
-        out = cayenne.decodeCayenneLpp(b64, datetime.datetime.now())              
+        out = cayenne.decodeCayenneLpp(b64, datetime.datetime.now())      
+        print(out)        
 
-        hit = pydash.find (out, {"id": "GyrometerX_1"})        
+        hit = pydash.find (out, {"id": "GyrometerX"})        
         self.assertTrue(hit)
         self.assertAlmostEqual(float(hit["value"]), 12.34, delta=0.1)
 
-        hit = pydash.find (out, {"id": "GyrometerY_1"})        
+        hit = pydash.find (out, {"id": "GyrometerY"})        
         self.assertTrue(hit)
         self.assertAlmostEqual(float(hit["value"]), -12.34, delta=0.1)
 
-        hit = pydash.find (out, {"id": "GyrometerZ_1"})        
+        hit = pydash.find (out, {"id": "GyrometerZ"})        
         self.assertTrue(hit)
         self.assertAlmostEqual(float(hit["value"]), 0.0, delta=0.1)
 
@@ -149,15 +146,15 @@ class TestStringMethods(unittest.TestCase):
         cayenne = cayenne_parser.CayenneParser()        
         out = cayenne.decodeCayenneLpp(b64, datetime.datetime.now())                
 
-        hit = pydash.find (out, {"id": "Longitude_1"})        
+        hit = pydash.find (out, {"id": "Longitude"})        
         self.assertTrue(hit)
         self.assertAlmostEqual(float(hit["value"]), -87.9094, delta=0.1)
 
-        hit = pydash.find (out, {"id": "Latitude_1"})        
+        hit = pydash.find (out, {"id": "Latitude"})        
         self.assertTrue(hit)
         self.assertAlmostEqual(float(hit["value"]), 42.3519, delta=0.1)
 
-        hit = pydash.find (out, {"id": "Altitude_1"})        
+        hit = pydash.find (out, {"id": "Altitude"})        
         self.assertTrue(hit)
         self.assertAlmostEqual(float(hit["value"]), 10.0, delta=0.1)
 
