@@ -29,8 +29,8 @@ class LoRaServerClient (threading.Thread):
       self._logger = logging.getLogger(globals.BUS_NAME)       
       self._cayenne =   cayenne_parser.CayenneParser()
       self._active_timer = {}      
-      self._thread = threading.Thread(target=self.Start, name="LoRaServer_thread")
-      # self._thread = threading.Thread(target=self.TestParser, name="LoRaServer_thread")
+      # self._thread = threading.Thread(target=self.Start, name="LoRaServer_thread")
+      self._thread = threading.Thread(target=self.TestParser, name="LoRaServer_thread")
       self._thread.daemon = True
       self._thread.start()    
 
