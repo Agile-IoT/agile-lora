@@ -45,6 +45,10 @@ Moreover, some other libraries have to be installed too; in this case, through a
 
 `sudo python3 -m pip install -r requirements.txt`
 
+## Configuration
+
+In the current version, we need to manually create a file `mqtt_conf.py` within `config` folder, pointing to the TTN/LoRaserver that we are going to subscribe. 
+
 ## Usage
 
 For this first and unplugged version (not connected to the AGILE stack yet), we can run the server and check that the bus and its underlying methods work accordingly
