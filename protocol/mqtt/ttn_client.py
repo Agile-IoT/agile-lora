@@ -90,12 +90,39 @@ class TtnClient (threading.Thread):
                   "unit": "dB",
                   "format": "float",
                   "subscribed": False,
-                  "lastUpdate": raw['metadata']['time']       
-            })                                          
-            
-            self._logger.info("Message received - " + json.dumps(data))   
+                  "lastUpdate": str(raw['metadata']['time'])})                     
+            data['streams'].append ({
+                  "format": component.dictionary["RSSI"]["format"],
+                  "subscribed": False,
+                  "value": raw['metadata']['gateways'][0]['rssi'],
+                  "id": "RSSI",
+                  "unit": component.dictionary["RSSI"]["unit"],
+                  "lastUpdate": str(raw['metadata']['time'])})           
+            data['streams'].append ({
+                  "format": component.dictionary["Latitude"]["format"],
+                  "subscribed":False,
+                  "value": raw['metadata']['gateways'][0]["latitude"],
+                  "id": "Latitude",
+                  "unit": component.dictionary["Latitude"]["unit"],
+                  "lastUpdate": str(raw['metadata']['time'])})           
+            data['streams'].append ({
+                  "format": component.dictionary["Longitude"]["format"],
+                  "subscribed":False,
+                  "value": raw['metadata']['gateways'][0]["longitude"],
+                  "id": "Longitude",
+                  "unit": component.dictionary["Longitude"]["unit"],
+                  "lastUpdate": str(raw['metadata']['time'])})           
+            # data['streams'].append ({
+            #       "format": component.dictionary["Altitude"]["format"],
+            #       "subscribed":False,
+            #       "value": raw['metadata']['gateways'][0]["altitude"],
+            #       "id": "Altitude",
+            #       "unit": component.dictionary["Altitude"]["unit"],
+            #       "lastUpdate": str(raw['metadata']['time'])})           
+
+            self._logger.debug("Message received - " + data['hardwareID'])   
             globals.queue.put(data)
-            self._logger.info("Message received")           
+                      
 
    def on_publish(self, mosq, obj, mid):      
       self._logger.info("mid: " + str(mid))          

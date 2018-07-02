@@ -57,7 +57,7 @@ dictionary = {
     "format": "float"
   },
   "RSSI": {
-    "unit": "dB",
+    "unit": "dBm",
     "format": "float"
   },
   "Accelerometer": {

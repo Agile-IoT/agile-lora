@@ -195,7 +195,7 @@ class LoRaServerClient (threading.Thread):
       # i.e., SNR, RSSI, Latitude, Longitude, Altitude
       data["streams"].append ({
          "format": component.dictionary["RSSI"]["format"],
-         "subscribed":False,
+         "subscribed": False,
          "value": raw["rxInfo"][0]["rssi"],
          "id": "RSSI",
          "unit": component.dictionary["RSSI"]["unit"],
@@ -203,7 +203,7 @@ class LoRaServerClient (threading.Thread):
       )
       data["streams"].append ({
          "format": component.dictionary["SNR"]["format"],
-         "subscribed":False,
+         "subscribed": False,
          "value": raw["rxInfo"][0]["loRaSNR"],
          "id": "SNR",
          "unit": component.dictionary["SNR"]["unit"],
@@ -211,7 +211,7 @@ class LoRaServerClient (threading.Thread):
       )
       data["streams"].append ({
          "format": component.dictionary["Latitude"]["format"],
-         "subscribed":False,
+         "subscribed": False,
          "value": raw["rxInfo"][0]["latitude"],
          "id": "Latitude",
          "unit": component.dictionary["Latitude"]["unit"],
@@ -219,7 +219,7 @@ class LoRaServerClient (threading.Thread):
       )
       data["streams"].append ({
          "format": component.dictionary["Longitude"]["format"],
-         "subscribed":False,
+         "subscribed": False,
          "value": raw["rxInfo"][0]["longitude"],
          "id": "Longitude",
          "unit": component.dictionary["Longitude"]["unit"],
@@ -227,7 +227,7 @@ class LoRaServerClient (threading.Thread):
       )
       data["streams"].append ({
          "format": component.dictionary["Altitude"]["format"],
-         "subscribed":False,
+         "subscribed": False,
          "value": raw["rxInfo"][0]["altitude"],
          "id": "Altitude",
          "unit": component.dictionary["Altitude"]["unit"],

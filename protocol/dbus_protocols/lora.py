@@ -195,13 +195,14 @@ class LoRaWAN(dbus.service.Object):
       self.ParseQueue()   
 
    @dbus.service.method(globals.IFACE, in_signature="sa{ss}", out_signature="")
-   def Subscribe(self, device_id, profile):      
+   def Subscribe(self, device_id, profile):       
+
       hit_1 = pydash.find(self._devices_list, {"hardwareID": device_id})
       if (hit_1 != None):            
             hit_2 = pydash.find(hit_1["streams"], {"id": profile["id"]})
             if (hit_2 != None):
                   hit_2["subscribed"] = True        
-                  self._logger.info("Subscribed to " + device_id)  
+                  self._logger.info("Subscribed to " + device_id + " - " + profile['id'])  
             else:                  
                   ProtocolException("Component " + profile['id']+ " not found (subscription to device ID) " + device_id)                     
       else:
@@ -214,7 +215,7 @@ class LoRaWAN(dbus.service.Object):
             hit_2 = pydash.find(hit_1["streams"], {"id": profile["id"]})
             if (hit_2 != None):
                   hit_2["subscribed"] = False 
-                  self._logger.info("Unsubscribed from " + device_id)       
+                  self._logger.info("Unsubscribed from " + device_id + " - " + profile['id'])  
             else:
                   ProtocolException("Component not found (subscription to device ID) " + device_id)   
       else:
@@ -362,8 +363,7 @@ class ProtocolManager(dbus.service.Object):
       self._interface = dbus.Interface (temp, "org.eclipse.agail.ProtocolManager")      
    
    def GetDevices(self):
-
-      print(len(self._devices))
+      
       if (len(self._devices)):
          self._devices = []        
 
