@@ -84,41 +84,46 @@ class TtnClient (threading.Thread):
                   data['streams'].append(temp)    
             
             # More data that can be parsed 
-            data['streams'].append({
-                  "id": "SNR",
-                  "value": raw['metadata']['gateways'][0]['snr'],
-                  "unit": "dB",
-                  "format": "float",
-                  "subscribed": False,
-                  "lastUpdate": str(raw['metadata']['time'])})                     
-            data['streams'].append ({
-                  "format": component.dictionary["RSSI"]["format"],
-                  "subscribed": False,
-                  "value": raw['metadata']['gateways'][0]['rssi'],
-                  "id": "RSSI",
-                  "unit": component.dictionary["RSSI"]["unit"],
-                  "lastUpdate": str(raw['metadata']['time'])})           
-            data['streams'].append ({
-                  "format": component.dictionary["Latitude"]["format"],
-                  "subscribed":False,
-                  "value": raw['metadata']['gateways'][0]["latitude"],
-                  "id": "Latitude",
-                  "unit": component.dictionary["Latitude"]["unit"],
-                  "lastUpdate": str(raw['metadata']['time'])})           
-            data['streams'].append ({
-                  "format": component.dictionary["Longitude"]["format"],
-                  "subscribed":False,
-                  "value": raw['metadata']['gateways'][0]["longitude"],
-                  "id": "Longitude",
-                  "unit": component.dictionary["Longitude"]["unit"],
-                  "lastUpdate": str(raw['metadata']['time'])})           
-            # data['streams'].append ({
-            #       "format": component.dictionary["Altitude"]["format"],
-            #       "subscribed":False,
-            #       "value": raw['metadata']['gateways'][0]["altitude"],
-            #       "id": "Altitude",
-            #       "unit": component.dictionary["Altitude"]["unit"],
-            #       "lastUpdate": str(raw['metadata']['time'])})           
+            if "snr" in raw['metadata']['gateways'][0]:                  
+                  data['streams'].append({
+                        "id": "SNR",
+                        "value": raw['metadata']['gateways'][0]['snr'],
+                        "unit": "dB",
+                        "format": "float",
+                        "subscribed": False,
+                        "lastUpdate": str(raw['metadata']['time'])})           
+            if "rssi" in raw['metadata']['gateways'][0]:          
+                  data['streams'].append ({
+                        "format": component.dictionary["RSSI"]["format"],
+                        "subscribed": False,
+                        "value": raw['metadata']['gateways'][0]['rssi'],
+                        "id": "RSSI",
+                        "unit": component.dictionary["RSSI"]["unit"],
+                        "lastUpdate": str(raw['metadata']['time'])}) 
+            if "latitude" in raw['metadata']['gateways'][0]:
+                  data['streams'].append ({
+                        "format": component.dictionary["Latitude"]["format"],
+                        "subscribed":False,
+                        "value": raw['metadata']['gateways'][0]["latitude"],
+                        "id": "Latitude",
+                        "unit": component.dictionary["Latitude"]["unit"],
+                        "lastUpdate": str(raw['metadata']['time'])}) 
+            if "longitude" in raw['metadata']['gateways'][0]:
+                  data['streams'].append ({
+                        "format": component.dictionary["Longitude"]["format"],
+                        "subscribed":False,
+                        "value": raw['metadata']['gateways'][0]["longitude"],
+                        "id": "Longitude",
+                        "unit": component.dictionary["Longitude"]["unit"],
+                        "lastUpdate": str(raw['metadata']['time'])}) 
+            if "altitude" in raw['metadata']['gateways'][0]:
+                  data['streams'].append ({
+                        "format": component.dictionary["Altitude"]["format"],
+                        "subscribed":False,
+                        "value": raw['metadata']['gateways'][0]["altitude"],
+                        "id": "Altitude",
+                        "unit": component.dictionary["Altitude"]["unit"],
+                        "lastUpdate": str(raw['metadata']['time'])}) 
 
             self._logger.debug("Message received - " + data['hardwareID'])   
             globals.queue.put(data)
