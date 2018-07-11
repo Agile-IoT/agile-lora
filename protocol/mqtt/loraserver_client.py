@@ -19,6 +19,7 @@ import mqtt_conf
 import threading
 import logging
 import json
+import random
 
 # Testing
 import base64
@@ -86,7 +87,8 @@ class LoRaServerClient (threading.Thread):
       streams.append ({
          "format": component.dictionary["RSSI"]["format"],
          "subscribed":False,
-         "value": raw["rxInfo"][0]["rssi"],
+      #    "value": raw["rxInfo"][0]["rssi"],
+         "value": random.uniform(-60,-40),
          "id": "RSSI",
          "unit": component.dictionary["RSSI"]["unit"],
          "lastUpdate": str(raw["rxInfo"][0]["time"])}
@@ -94,7 +96,8 @@ class LoRaServerClient (threading.Thread):
       streams.append ({
          "format": component.dictionary["SNR"]["format"],
          "subscribed":False,
-         "value": raw["rxInfo"][0]["loRaSNR"],
+      #    "value": raw["rxInfo"][0]["loRaSNR"],
+         "value": random.uniform(0,20),
          "id": "SNR",
          "unit": component.dictionary["SNR"]["unit"],
          "lastUpdate": str(raw["rxInfo"][0]["time"])}
