@@ -11,7 +11,7 @@ import globals as globals
 import mqtt_conf 
 import components_dictionary as component
 
-import time, datetime, pytz, ciso8601
+import time, datetime, pytz
 from queue import Queue
 import paho.mqtt.client as mqtt
 import threading

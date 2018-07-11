@@ -1,7 +1,9 @@
 FROM resin/raspberrypi3-python
+# FROM python:3
 
 # Install dependencies
 RUN apt-get update && apt-get install --no-install-recommends -y \
+  apt-utils \
   python3-dbus \
   libdbus-1-dev \
   libdbus-glib-1-dev \
@@ -13,16 +15,12 @@ RUN apt-get update && apt-get install --no-install-recommends -y \
     && apt-get clean && rm -rf /var/lib/apt/lists/*
 
 # resin-sync will always sync to /usr/src/app, so code needs to be here.
+COPY . /usr/src/app 
 WORKDIR /usr/src/app 
+# RUN pip install -r requirements.txt
+RUN python3 -m pip install -r requirements.txt 
 
-COPY requirements.txt requirements.txt
+ENV DBUS_SESSION_BUS_ADDRESS=unix:path=/usr/src/app/.agile_bus/agile_bus_socket
 
-RUN python3 -m pip install -r requirements.txt
-
-COPY config config
-COPY dbus_protocols dbus_protocols
-COPY dbus_server.py dbus_server.py
-COPY mqtt mqtt 
-COPY utils utils 
-
-CMD ./dbus_server.py
+# CMD ./protocol/dbus_server
+RUN ./dbus_server.py

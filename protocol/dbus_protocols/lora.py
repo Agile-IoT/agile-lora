@@ -21,7 +21,7 @@ import logging
 import threading
 import pydash
 import struct 
-import time, datetime, ciso8601
+import time, datetime
 
 # --- Module-specific variables ---------
 PROTOCOL_NAME = "LoRa"

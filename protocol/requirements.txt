@@ -6,5 +6,4 @@ dbus-python
 paho-mqtt
 pydash
 queuelib
-ciso8601
 pytz

@@ -4,7 +4,7 @@
 #   available under the terms of the Eclipse Public License 2.0
 #   which is available at https://www.eclipse.org/legal/epl-2.0/ 
 #   SPDX-License-Identifier: EPL-2.0
-#   Contributors: ATOS Spain S
+#   Contributors: ATOS Spain S.A.
 ################################################################# 
 
 import globals as globals
@@ -12,7 +12,7 @@ import mqtt_conf
 import components_dictionary as component
 import cayenne_parser
 
-import time, datetime, pytz, ciso8601
+import time, datetime, pytz
 from queue import Queue
 import paho.mqtt.client as mqtt
 import mqtt_conf 
@@ -30,8 +30,8 @@ class LoRaServerClient (threading.Thread):
       self._logger = logging.getLogger(globals.BUS_NAME)       
       self._cayenne =   cayenne_parser.CayenneParser()
       self._active_timer = {}      
-      self._thread = threading.Thread(target=self.Start, name="LoRaServer_thread")
-      # self._thread = threading.Thread(target=self.TestParser, name="LoRaServer_thread")
+      # self._thread = threading.Thread(target=self.Start, name="LoRaServer_thread")
+      self._thread = threading.Thread(target=self.TestParser, name="LoRaServer_thread")
       self._thread.daemon = True
       self._thread.start()    
 
