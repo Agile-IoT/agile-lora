@@ -12,7 +12,6 @@
 #     Create-Net / FBK - initial API and implementation
 #-------------------------------------------------------------------------------
 
-# ToDO - Tailor to agile-lora (this current version corresponds to agile-dummy-protocol)
 
 MODULE=${1:-all}
 DEPS=`realpath ./deps` 
@@ -75,8 +74,8 @@ export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$DEPS:$DEPS/lib:/usr/lib:/usr/lib/jvm/jd
 
 mvn="mvn"
 
-if [ $MODULE = 'all' ] || [ $MODULE = 'Dummy' ]; then
-  ./scripts/stop.sh "protocol.Dummy"
+if [ $MODULE = 'all' ] || [ $MODULE = 'LoRA' ]; then
+  ./scripts/stop.sh "protocol.LoRa"
 
   # wait for ProtocolManager to initialize
   while `! qdbus org.eclipse.agail.ProtocolManager > /dev/null`; do
@@ -84,12 +83,13 @@ if [ $MODULE = 'all' ] || [ $MODULE = 'Dummy' ]; then
     sleep 1;
   done
 
-  # Register Dummy in ProtocolManager
-  qdbus org.eclipse.agail.ProtocolManager /org/eclipse/agail/ProtocolManager org.eclipse.agail.ProtocolManager.Add Dummy
+  # Register LoRa in ProtocolManager
+  qdbus org.eclipse.agail.ProtocolManager /org/eclipse/agail/ProtocolManager org.eclipse.agail.ProtocolManager.Add LoRa
 
 
-   java -cp org.eclipse.agail.protocol.DummyProtocol/target/agile-dummy-protocol-1.0.0-jar-with-dependencies.jar -Djava.library.path=deps:deps/lib org.eclipse.agail.protocol.dummy.DummyProtocol &
-  echo "Started AGILE Dummy protocol"
+  #  java -cp org.eclipse.agail.protocol.DummyProtocol/target/agile-dummy-protocol-1.0.0-jar-with-dependencies.jar -Djava.library.path=deps:deps/lib org.eclipse.agail.protocol.dummy.DummyProtocol &
+   python3 ./dbus_server.py
+  echo "Started AGILE LoRa protocol"
 fi
 
 

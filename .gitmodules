@@ -1,5 +1,4 @@
-[submodule "agile-dbus-java-interface"]
-	path = agile-dbus-java-interface
+[submodule "protocol/agile-dbus-java-interface"]
+	path = protocol/agile-dbus-java-interface
 	url = https://github.com/Agile-IoT/agile-dbus-java-interface.git
 	ignore = dirty
-
