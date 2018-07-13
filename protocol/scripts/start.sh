@@ -69,10 +69,10 @@ if [ -z "$DBUS_SESSION_BUS_ADDRESS" ]; then
 fi
 export DBUS_SESSION_BUS_ADDRESS
 
-export MAVEN_OPTS_BASE="-Djava.library.path=$DEPS:$DEPS/lib -DDISPLAY=$DISPLAY -DDBUS_SESSION_BUS_ADDRESS=$DBUS_SESSION_BUS_ADDRESS"
-export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$DEPS:$DEPS/lib:/usr/lib:/usr/lib/jvm/jdk-8-oracle-arm32-vfp-hflt/jre/lib/arm
+# export MAVEN_OPTS_BASE="-Djava.library.path=$DEPS:$DEPS/lib -DDISPLAY=$DISPLAY -DDBUS_SESSION_BUS_ADDRESS=$DBUS_SESSION_BUS_ADDRESS"
+# export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$DEPS:$DEPS/lib:/usr/lib:/usr/lib/jvm/jdk-8-oracle-arm32-vfp-hflt/jre/lib/arm
 
-mvn="mvn"
+# mvn="mvn"
 
 if [ $MODULE = 'all' ] || [ $MODULE = 'LoRA' ]; then
   ./scripts/stop.sh "protocol.LoRa"
@@ -88,7 +88,7 @@ if [ $MODULE = 'all' ] || [ $MODULE = 'LoRA' ]; then
 
 
   #  java -cp org.eclipse.agail.protocol.DummyProtocol/target/agile-dummy-protocol-1.0.0-jar-with-dependencies.jar -Djava.library.path=deps:deps/lib org.eclipse.agail.protocol.dummy.DummyProtocol &
-   python3 ./dbus_server.py
+  python3 ./dbus_server.py
   echo "Started AGILE LoRa protocol"
 fi
 

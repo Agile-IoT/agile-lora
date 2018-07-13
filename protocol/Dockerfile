@@ -10,12 +10,14 @@
 #AGILE DBUS JAVA INTERFACE installation/connection
 
 ARG BASEIMAGE_BUILD=agileiot/raspberry-pi3-zulujdk:8-jdk-maven
-ARG BASEIMAGE_DEPLOY=agileiot/raspberry-pi3-zulujdk:8-jre
+# ARG BASEIMAGE_DEPLOY=agileiot/raspberry-pi3-zulujdk:8-jre
+ARG BASEIMAGE_DEPLOY=resin/raspberrypi3-python
 
 FROM $BASEIMAGE_BUILD
 
 # Add packages
 RUN apt-get update && apt-get install --no-install-recommends -y \
+    ## DBUS
     build-essential \
     git\
     ca-certificates \
@@ -34,7 +36,7 @@ RUN apt-get update && apt-get install --no-install-recommends -y \
     clang \
     gcc-4.9 \
     g++-4.9 \
-    qdbus \
+    qdbus \   
     && apt-get clean && rm -rf /var/lib/apt/lists/*
 
 # resin-sync will always sync to /usr/src/app, so code needs to be here.
@@ -48,29 +50,36 @@ RUN CC=clang CXX=clang++ CMAKE_C_COMPILER=clang CMAKE_CXX_COMPILER=clang++ \
 scripts/install-agile-interfaces.sh $APATH/deps
 
 # agile-lora installation
-# FROM ubuntu:18.04
-FROM resin/raspberrypi3-python
+# FROM resin/raspberrypi3-python
+FROM $BASEIMAGE_DEPLOY
+WORKDIR /usr/src/app 
+ENV APATH /usr/src/app
 
-# Install dependencies
-RUN apt-get update && apt-get install --no-install-recommends -y \ 
-  apt-utils \  
-  python3-dbus \
-  libdbus-1-dev \
-  libdbus-glib-1-dev \
-  python3-gi \
-  python3-pip \
-  build-essential \
-  python3-dev \
-  python3-tk \
+# Add packages
+RUN apt-get update && apt-get install --no-install-recommends -y \
+    qdbus \  
+    python3-dbus \
+    libdbus-1-dev \
+    libdbus-glib-1-dev \
+    python3-gi \
+    python3-pip \
+    build-essential \
+    python3-dev \
+    python3-tk \
     && apt-get clean && rm -rf /var/lib/apt/lists/*
 
 # resin-sync will always sync to /usr/src/app, so code needs to be here.
-COPY . /usr/src/app 
-WORKDIR /usr/src/app 
+# COPY . /usr/src/app 
+
+COPY config config
+COPY mqtt mqtt 
+COPY dbus_protocols dbus_protocols
+COPY utils utils
+COPY scripts scripts
+COPY dbus_server.py dbus_server.py
+COPY requirements.txt requirements.txt
+
+
 RUN python3 -m pip install -r requirements.txt 
-
-# ENV DBUS_SESSION_BUS_ADDRESS=unix:path=/usr/src/app/.agile_bus/agile_bus_socket
-# RUN sudo DBUS_SESSION_BUS_ADDRESS=unix:path=/usr/src/app/.agile_bus/agile_bus_socket ./dbus_server.py
-
 
 CMD [ "bash", "/usr/src/app/scripts/start.sh" ]
