@@ -1,8 +1,8 @@
+# FROM ubuntu:18.04
 FROM resin/raspberrypi3-python
-# FROM python:3
 
 # Install dependencies
-RUN apt-get update && apt-get install --no-install-recommends -y \
+RUN apt-get update && apt-get install --no-install-recommends -y \ 
   apt-utils \
   python3-dbus \
   libdbus-1-dev \
@@ -17,10 +17,8 @@ RUN apt-get update && apt-get install --no-install-recommends -y \
 # resin-sync will always sync to /usr/src/app, so code needs to be here.
 COPY . /usr/src/app 
 WORKDIR /usr/src/app 
-# RUN pip install -r requirements.txt
 RUN python3 -m pip install -r requirements.txt 
 
-ENV DBUS_SESSION_BUS_ADDRESS=unix:path=/usr/src/app/.agile_bus/agile_bus_socket
+# ENV DBUS_SESSION_BUS_ADDRESS=unix:path=/usr/src/app/.agile_bus/agile_bus_socket
 
-# CMD ./protocol/dbus_server
-RUN ./dbus_server.py
+RUN sudo DBUS_SESSION_BUS_ADDRESS=unix:path=/usr/src/app/.agile_bus/agile_bus_socket ./dbus_server.py

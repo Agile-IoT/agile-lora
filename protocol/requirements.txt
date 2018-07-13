@@ -7,3 +7,4 @@ paho-mqtt
 pydash
 queuelib
 pytz
+liccheck

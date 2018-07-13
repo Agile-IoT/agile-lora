@@ -1,9 +1,9 @@
-version: '2.1'
+version: '3'
 
 services:
   agile-lora:
     container_name: agile-lora
-    # image: agile-lora
+    # image: agileiot/agile-lora
     build: .
     # depends_on:
     #   - agile-dbus
@@ -15,3 +15,15 @@ services:
     restart: always
     privileged: true
     network_mode: "host"
+
+  # agile-dummy:
+  #   container_name: agile-dummy
+  #   image: agileiot/agile-dummy-$AGILE_ARCH:v0.3.1
+  #   # build: apps/agile-dummy-protocol
+  #   depends_on:
+  #     - agile-dbus
+  #   volumes:
+  #     - $DBUS_SESSION_SOCKET_DIR:/usr/src/app/.agile_bus
+  #   environment:
+  #     - DBUS_SESSION_BUS_ADDRESS=unix:path=/usr/src/app/.agile_bus/agile_bus_socket
+  #   restart: always
