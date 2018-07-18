@@ -17,8 +17,7 @@ import logging
 
 class MqttClient():
     def __init__(self):                        
-        self._logger = logging.getLogger(globals.BUS_NAME)           
-        # self._dbus = RecordNotifier()
+        self._logger = logging.getLogger(globals.BUS_NAME)                   
 
         try:
             if (mqtt_conf.APP_SERVER == "TTN"):

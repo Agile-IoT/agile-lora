@@ -12,6 +12,7 @@ import mqtt_conf
 import components_dictionary as component
 import cayenne_parser
 
+import os
 import time, datetime, pytz
 from queue import Queue
 import paho.mqtt.client as mqtt
@@ -30,8 +31,8 @@ class LoRaServerClient (threading.Thread):
       self._logger = logging.getLogger(globals.BUS_NAME)       
       self._cayenne =   cayenne_parser.CayenneParser()
       self._active_timer = {}      
-      # self._thread = threading.Thread(target=self.Start, name="LoRaServer_thread")
-      self._thread = threading.Thread(target=self.TestParser, name="LoRaServer_thread")
+      self._thread = threading.Thread(target=self.Start, name="LoRaServer_thread")
+      # self._thread = threading.Thread(target=self.TestParser, name="LoRaServer_thread")
       self._thread.daemon = True
       self._thread.start()    
 
@@ -136,6 +137,9 @@ class LoRaServerClient (threading.Thread):
       self._logger.info("LoRaServer client thread instanced")        
       mqttc = mqtt.Client()      
       
+
+      print(os.environ.get('TEST'))
+
       # Assign event callbacks
       mqttc.on_connect = self.on_connect
       mqttc.on_message = self.on_message

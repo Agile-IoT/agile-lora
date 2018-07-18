@@ -30,7 +30,7 @@ from dbus_protocols import lora as lora_protocol
 # -----------------------
 
 # --- Variables ---------
-LOGLEVEL = logging.DEBUG       # DEBUG, INFO, WARNING, ERROR, CRITICAL
+LOGLEVEL = logging.INFO       # DEBUG, INFO, WARNING, ERROR, CRITICAL
 mainloop = GLib.MainLoop()
 # -----------------------
 
