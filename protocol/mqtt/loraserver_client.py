@@ -136,10 +136,7 @@ class LoRaServerClient (threading.Thread):
    def Start(self):
       self._logger.info("LoRaServer client thread instanced")        
       mqttc = mqtt.Client()      
-      
-
-      print(os.environ.get('TEST'))
-
+           
       # Assign event callbacks
       mqttc.on_connect = self.on_connect
       mqttc.on_message = self.on_message

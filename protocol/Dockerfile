@@ -10,7 +10,6 @@
 #AGILE DBUS JAVA INTERFACE installation/connection
 
 ARG BASEIMAGE_BUILD=agileiot/raspberry-pi3-zulujdk:8-jdk-maven
-# ARG BASEIMAGE_DEPLOY=agileiot/raspberry-pi3-zulujdk:8-jre
 ARG BASEIMAGE_DEPLOY=resin/raspberrypi3-python
 
 FROM $BASEIMAGE_BUILD
