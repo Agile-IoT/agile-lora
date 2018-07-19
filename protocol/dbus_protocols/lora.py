@@ -9,10 +9,7 @@
 
 # --- Imports -----------
 import sys
-
-# sys.path.append("../config/")
 import globals as globals
-# import protocol_manager
 
 from queue import Queue
 import dbus

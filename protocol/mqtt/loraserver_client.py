@@ -8,15 +8,13 @@
 ################################################################# 
 
 import globals as globals
-import mqtt_conf 
 import components_dictionary as component
 import cayenne_parser
 
-import os
+import os, sys
 import time, datetime, pytz
 from queue import Queue
 import paho.mqtt.client as mqtt
-import mqtt_conf 
 import threading
 import logging
 import json
@@ -36,10 +34,12 @@ class LoRaServerClient (threading.Thread):
       self._thread.daemon = True
       self._thread.start()    
 
-   def TestParser(self):             
+   def TestParser(self):            
       
       self._active_timer = threading.Timer(6, self.TestParser)                              
       self._active_timer.start()
+
+      self._mqttc = mqtt.Client() 
       
       raw = {
             "applicationID": "1",
@@ -135,65 +135,47 @@ class LoRaServerClient (threading.Thread):
 
    def Start(self):
       self._logger.info("LoRaServer client thread instanced")        
-      mqttc = mqtt.Client()      
+      self._mqttc = mqtt.Client()      
            
       # Assign event callbacks
-      mqttc.on_connect = self.on_connect
-      mqttc.on_message = self.on_message
-      mqttc.on_subscribe = self.on_subscribe
+      self._mqttc.on_connect = self.on_connect
+      self._mqttc.on_message = self.on_message
+      self._mqttc.on_subscribe = self.on_subscribe
+      
+      self._mqttc.username_pw_set(os.environ.get('LORAWAN_APPID'), os.environ.get('LORAWAN_PSW'))
+      self._mqttc.connect(os.environ.get('LORAWAN_MQTT_URL'), int(os.environ.get('LORAWAN_MQTT_PORT')), 60) 
 
-      mqttc.username_pw_set(mqtt_conf.APPID, mqtt_conf.PSW)
-      mqttc.connect(mqtt_conf.URL, 1883, 60)              
 
       # and listen to server
       run = True
       while run:
-         mqttc.loop()
+         self._mqttc.loop()
 
    def on_connect (self, mqttc, mosq, obj, rc):      
-      self._logger.info("Connected with result code:" + str(rc))          
+      if rc == 0:
+         self._logger.info("Connected to MQTT Broker - " + os.environ.get('LORAWAN_MQTT_URL'))
+      else:
+         self._logger.error("Connection error to MQTT Broker - " + os.environ.get('LORAWAN_MQTT_URL'))        
       
       # subscribe for all devices of user (tailor to every MQTT Broker)
-      mqttc.subscribe('+/devices/+/up')    
+      mqttc.subscribe(os.environ.get('LORAWAN_MQTT_TOPIC'))  
 
    def on_message (self, mqttc,obj,msg):      
       
       raw = json.loads(msg.payload.decode())                        
 
       data = {
-         "deviceID": raw["dev_id"],
-         "hardwareID": raw["hardware_serial"],                     
+         "deviceID": raw["deviceName"],
+         "hardwareID": raw["devEUI"],                  
          "streams": [
          ],
          "connected": False,
          "status": globals.STATUS_TYPE['AVAILABLE'].name               
       }   
 
-      if mqtt_conf.PAYLOAD == "clear":
-            # Parse the payload field 
-            for key in raw['payload_fields']:  
-                  temp = {
-                        "id": "",
-                        "value": str(raw['payload_fields'][key]),
-                        "unit": "",
-                        "format": "",
-                        "subscribed": False,
-                        "lastUpdate": raw['metadata']['time'],
-                        }
-                  aux = key.split("_")
-                  temp['id'] = '_'.join(aux[0:len(aux)-1]).title()
-                  
-                  #Asserts needed here
-                  temp['unit']= component.dictionary[temp['id']]['unit']
-                  temp['format']= component.dictionary[temp['id']]['format']        
-                  data['streams'].append(temp)                     
-
-            
-      elif mqtt_conf.PAYLOAD == "base64":            
-            streams = self._cayenne.decodeCayenneLpp(raw["data"], str(raw["rxInfo"][0]["time"]))                 
-            data["streams"] = streams 
-      else:    
-            raise ValueError('Payload type ' + mqtt_conf.PAYLOAD + ' not valid')
+      # Cayenne payload parsing
+      streams = self._cayenne.decodeCayenneLpp(raw["data"], str(raw["rxInfo"][0]["time"]))                 
+      data["streams"] = streams    
 
        # Append data from the message (overhead) - static process
       # i.e., SNR, RSSI, Latitude, Longitude, Altitude
@@ -252,5 +234,10 @@ class LoRaServerClient (threading.Thread):
       self._logger.debug("userdata:" + str(obj))         
 
    def TearDown(self):               
-      if (isinstance(self._active_timer, threading.Timer)):
-         self._active_timer.cancel()
+      try: 
+         if (self._mqttc):
+            self._mqttc.unsubscribe(os.environ.get('LORAWAN_MQTT_TOPIC'))
+         if (isinstance(self._active_timer, threading.Timer)):
+            self._active_timer.cancel()
+      except:         
+         sys.exit("Error when closing TTN client")

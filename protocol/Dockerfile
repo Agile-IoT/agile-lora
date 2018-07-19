@@ -69,8 +69,6 @@ RUN apt-get update && apt-get install --no-install-recommends -y \
 
 # resin-sync will always sync to /usr/src/app, so code needs to be here.
 # COPY . /usr/src/app 
-
-COPY config config
 COPY mqtt mqtt 
 COPY dbus_protocols dbus_protocols
 COPY utils utils

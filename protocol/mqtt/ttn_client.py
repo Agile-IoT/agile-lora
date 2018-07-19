@@ -8,9 +8,9 @@
 ################################################################# 
 
 import globals as globals
-import mqtt_conf 
 import components_dictionary as component
 
+import os, sys
 import time, datetime, pytz
 from queue import Queue
 import paho.mqtt.client as mqtt
@@ -31,30 +31,32 @@ class TtnClient (threading.Thread):
 
    def Start(self):
       self._logger.info("TTN client thread instanced")        
-      mqttc = mqtt.Client()      
+      self._mqttc = mqtt.Client()      
       
       # Assign event callbacks
-      mqttc.on_connect = self.on_connect
-      mqttc.on_message = self.on_message
-      mqttc.on_subscribe = self.on_subscribe
+      self._mqttc.on_connect = self.on_connect
+      self._mqttc.on_message = self.on_message
+      self._mqttc.on_subscribe = self.on_subscribe      
 
-      mqttc.username_pw_set(mqtt_conf.APPID, mqtt_conf.PSW)
-      mqttc.connect(mqtt_conf.URL, 1883, 60)        
+      self._mqttc.username_pw_set(os.environ.get('LORAWAN_APPID'), os.environ.get('LORAWAN_PSW'))
+      self._mqttc.connect(os.environ.get('LORAWAN_MQTT_URL'), int(os.environ.get('LORAWAN_MQTT_PORT')), 60)             
 
       # and listen to server
       run = True
       while run:
-         mqttc.loop()
+         self._mqttc.loop()
 
    def on_connect (self, mqttc, mosq, obj, rc):      
-      self._logger.info("Connected with result code:" + str(rc))          
+      if rc == 0:
+         self._logger.info("Connected to MQTT Broker - " + os.environ.get('LORAWAN_MQTT_URL'))
+      else:
+         self._logger.error("Connection error to MQTT Broker - " + os.environ.get('LORAWAN_MQTT_URL'))
+
       # subscribe for all devices of user
-      mqttc.subscribe('+/devices/+/up')    
+      mqttc.subscribe(os.environ.get('LORAWAN_MQTT_TOPIC'))    
 
    def on_message (self, mqttc,obj,msg):       
-
-      raw = json.loads(msg.payload.decode())     
-
+      raw = json.loads(msg.payload.decode())    
       if (raw['payload_raw'] != None):
             data = {
                   "deviceID": raw["dev_id"],
@@ -133,12 +135,21 @@ class TtnClient (threading.Thread):
       self._logger.info("mid: " + str(mid))          
 
    def on_subscribe(self, mosq, obj, mid, granted_qos):      
-      self._logger.info("Subscribed: " + str(mid) + " " + str(granted_qos))          
+      self._logger.info("Subscribed to topic " + str(os.environ.get('LORAWAN_MQTT_TOPIC')))          
+
+
+   def on_unsubscribe(self, client, userdata, mid):      
+      self._logger.info("UnSubscribed: " + str(client) + " " + str(granted_qos))                  
 
    def on_log(self, mqttc,obj,level,buf):
       self._logger.info("message:" + str(buf))          
       self._logger.info("userdata:" + str(obj))           
 
-   def TearDown(self):               
-      if (isinstance(self._active_timer, threading.Timer)):
-         self._active_timer.cancel()
+   def TearDown(self):  
+      try: 
+         if (self._mqttc):
+            self._mqttc.unsubscribe(os.environ.get('LORAWAN_MQTT_TOPIC'))
+         if (isinstance(self._active_timer, threading.Timer)):
+            self._active_timer.cancel()
+      except:         
+         sys.exit("Error on closing TTN client")

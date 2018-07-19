@@ -10,30 +10,34 @@
 import os
 import sys
 import globals as globals
-import mqtt_conf 
 import ttn_client
 import loraserver_client
 import logging
 
 class MqttClient():
     def __init__(self):                        
-        self._logger = logging.getLogger(globals.BUS_NAME)                   
-
-        try:
-            if (mqtt_conf.APP_SERVER == "TTN"):
-                self._listener = ttn_client.TtnClient()        
-            elif (mqtt_conf.APP_SERVER == "LoRaServer"):  
-                self._listener = loraserver_client.LoRaServerClient()               
-            else: 
-                self._listener = None
-                raise NameError("Application server not found - " + mqtt_conf.APP_SERVER)                
-        except:                                
-            raise RuntimeError("Something happened with the connection to the MQTT Server")                
+        self._logger = logging.getLogger(globals.BUS_NAME)    
+        self._listener = None
+        
+        if os.environ.get('LORAWAN_APP_SERVER'):
+            try:
+                if (os.environ.get('LORAWAN_APP_SERVER') == "TTN"):
+                    self._listener = ttn_client.TtnClient()        
+                elif (os.environ.get('LORAWAN_APP_SERVER') == "LoRaServer"):  
+                    self._listener = loraserver_client.LoRaServerClient()               
+                else: 
+                    self._listener = None                    
+                    logging.error("Application server not found")                                                       
+            except:                                                
+                sys.exit("Wrong application server")
+        else:
+            logging.error("Application server not found - Please configure .env file")
 
 
     def TearDown(self):      
-
-        # Tear down MQTT instances
+        # Tear down MQTT instances        
         if (self._listener):
             self._listener.TearDown()    
+        
+        
         

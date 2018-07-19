@@ -8,3 +8,4 @@ pydash
 queuelib
 pytz
 liccheck
+python-dotenv

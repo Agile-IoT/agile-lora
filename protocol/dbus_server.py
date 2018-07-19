@@ -12,7 +12,6 @@
 
 # --- Imports -----------
 import sys
-sys.path.append('config/')
 sys.path.append('mqtt/')
 sys.path.append('utils/')
 
@@ -24,7 +23,10 @@ import dbus.exceptions
 import dbus.mainloop.glib
 import threading
 
-from config import globals as globals
+from os.path import join, dirname
+from dotenv import load_dotenv
+
+import globals as globals
 from mqtt_client import MqttClient 
 from dbus_protocols import lora as lora_protocol
 # -----------------------
@@ -64,8 +66,12 @@ if __name__ == "__main__":
       datefmt="%Y-%m-%d %H:%M:%S",
       level=LOGLEVEL
    )   
-   dbusLoop()
-  
+
+   # Load .ENV file
+   load_dotenv(join(dirname(__file__), '.env'))
+
+   # Run DBus loop
+   dbusLoop()  
    endProgram(0)
 # -----------------------
 

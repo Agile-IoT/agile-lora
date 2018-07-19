@@ -11,7 +11,7 @@ services:
     volumes:
       - $DBUS_SESSION_SOCKET_DIR:/usr/src/app/.agile_bus
     environment:
-      - DBUS_SESSION_BUS_ADDRESS=unix:path=/usr/src/app/.agile_bus/agile_bus_socket      
+      - DBUS_SESSION_BUS_ADDRESS=unix:path=/usr/src/app/.agile_bus/agile_bus_socket    
     restart: always
     privileged: true
     network_mode: "host"
