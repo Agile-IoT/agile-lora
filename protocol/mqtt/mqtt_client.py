@@ -18,7 +18,7 @@ class MqttClient():
     def __init__(self):                        
         self._logger = logging.getLogger(globals.BUS_NAME)    
         self._listener = None
-        
+
         if os.environ.get('LORAWAN_APP_SERVER'):
             try:
                 if (os.environ.get('LORAWAN_APP_SERVER') == "TTN"):

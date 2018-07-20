@@ -69,12 +69,14 @@ RUN apt-get update && apt-get install --no-install-recommends -y \
 
 # resin-sync will always sync to /usr/src/app, so code needs to be here.
 # COPY . /usr/src/app 
+COPY agile-dbus-java-interface agile-dbus-java-interface
 COPY mqtt mqtt 
 COPY dbus_protocols dbus_protocols
 COPY utils utils
 COPY scripts scripts
-COPY dbus_server.py dbus_server.py
 COPY requirements.txt requirements.txt
+COPY .env .env
+COPY dbus_server.py dbus_server.py
 
 
 RUN python3 -m pip install -r requirements.txt 

@@ -66,6 +66,7 @@ if [ -z "$DBUS_SESSION_BUS_ADDRESS" ]; then
   echo "!! Cannot export DBUS_SESSION_BUS_ADDRESS. Exit"
   exit 1
 fi
+
 export DBUS_SESSION_BUS_ADDRESS
 
 
