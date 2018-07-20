@@ -112,6 +112,6 @@ sudo DBUS_SESSION_BUS_ADDRESS=unix:path=$HOME/.agile/agile_bus/agile_bus_socket 
 At the time of writing this README file, the agile-lora protocol is not part of the agile-stack ecosystem. As soon as we achieve to merge them, we will properly update the documentation.
 
 
-##License
+## License
 
 [Eclipse Public License -v 2.0](https://www.eclipse.org/legal/epl-2.0/)
