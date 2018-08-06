@@ -19,9 +19,10 @@
 This repository handles the communication between LoRaWAN nodes (Class A) and the legacy [AGILE stack](https://github.com/Agile-IoT/agile-stack), as shown in the figure below. 
 
 
-| ![agile-lora protocol overview](./docs/agile-lora-protocol-overview.png) | 
+| ![agile-lora protocol overview](docs/agile-lora-protocol-overview.png) | 
 |:--:|
 | *LoRa protocol overview* |
+
 
 As illustrated in the middle of the picture, this repository supports the installation of two different LoRaWAN stacks, namely [**The Things Network (TTN)**](https://www.thethingsnetwork.org/) and [**LoRaServer**](https://www.loraserver.io/) on a Raspberry Pi (2 or 3). In a nutshell, nodes use the LoRaWAN protocol and send data to an Application Server, which will be the connection point to our implementation. Technically speaking, we subscribe to an Application Server's MQTT broker in order to get all the data streams coming from the various sensors. After that, the *agile-lora* protocol (right part of the figure) is the responsible for the communication with the [*agile-core*](https://github.com/Agile-IoT/agile-core).
 
@@ -50,22 +51,18 @@ However, we also offer another version that includes an auto-configurable Docker
   * [etcher](https://etcher.io/)
 - Hardware:
   * Raspberry pi 2 or 3
-  * SD card `>= 8gb` 
+  * SD card `>= 8gb`
   * Wifi dongle or ethernet cable *(optional if you have the pi3)*
 
 ### Configuration
 
-Basically, we need to create a file called `.env` where we have to specify the following parameters (some samples included in the `.env.example` file )
-
-specify the following variables, which define the connection to the TTN/LoRaServer MQTT Broker
+Basically, we need to specify the following variables, which define the connection to the TTN/LoRaServer MQTT Broker
 
 ```
-LORAWAN_APP_SERVER --> "LoRaServer" or "TTN"
-LORAWAN_APPID --> Name of the application
-LORAWAN_PSW --> Password
-LORAWAN_MQTT_URL --> Endpoint of the MQTT Broker   
-LORAWAN_MQTT_PORT --> Port (by default, 1883)
-LORAWAN_MQTT_TOPIC --> Topic to which we will subscribe (specific examples below)
+LORAWAN_APP_SERVER = "LoRaServer"  # Current options handled ("TTN", "LoRaServer")
+LORAWAN_APPID  = "<YOUR APP ID>"
+LORAWAN_PSW    = "<YOUR APP password>"
+LORAWAN_URL = "< URL to the MQTT Broker>"
 ```
 As we have hinted before, two options are available, with slight differences between each other. For a deeper understanding, please refer to [TTN](https://www.thethingsnetwork.org/docs/applications/mqtt/) and [LoRaServer](https://www.loraserver.io/install/mqtt-auth/) MQTT documentation. 
 
@@ -73,10 +70,35 @@ As we have hinted before, two options are available, with slight differences bet
 ### Launching the protocol
 
 
-
    #### 1. Docker-compose (agile compose)
    
-   In this case, after setting the `.env` file, the next and last step to make it run is the following command:
+   In this very first example, we only have to: 1- set the environment variables within the `docker-compose.yml` file (sample below, building from the source code, since the Docker image is not ready yet)
+   
+   ```
+version: '3'
+services:
+  agile-lora:
+    container_name: agile-lora
+    # image: agileiot/agile-lora
+    build: .
+    depends_on:
+      - agile-dbus
+      - agile-core
+    volumes:
+      - $DBUS_SESSION_SOCKET_DIR:/usr/src/app/.agile_bus
+    environment:
+      - DBUS_SESSION_BUS_ADDRESS=unix:path=/usr/src/app/.agile_bus/agile_bus_socket   
+      - LORAWAN_APP_SERVER = "LoRaServer"  # Current options handled ("TTN", "LoRaServer")
+      - LORAWAN_APPID  = "<YOUR APP ID>"
+      - LORAWAN_PSW    = "<YOUR APP password>"
+      - LORAWAN_URL = "< URL to the MQTT Broker>"   
+    restart: always
+    privileged: true
+    network_mode: "host"
+   ```
+   
+   Behold that this module depends on both [*agile-dbus*](https://github.com/Agile-IoT/agile-dbus) and [*agile-core*](https://github.com/Agile-IoT/agile-core).
+   The next and last step to make it run is the following command:
    
    ```
    docker-compose up
@@ -106,6 +128,20 @@ For this first and unplugged version (not connected to the AGILE stack yet), we 
 ```
 sudo DBUS_SESSION_BUS_ADDRESS=unix:path=$HOME/.agile/agile_bus/agile_bus_socket ./dbus_server.py
 ```
+
+### Devices 
+
+Due to the current version of AGILE's DeviceFactory (which can be found within [agile-core](https://github.com/Agile-IoT/agile-core)), the creation of devices is static and does not pay attention to the different components that actual devices might have. This means that we have had to set some components that those devices own. Namely, we have followed Sky-watch's devices that are used for one of the pilots (you can find more information about the project's pilots [here](http://agile-iot.eu/category/pilots/)).
+
+As a matter of fact, the components (sensors) that are instanced when a node is registered are the following ones: 
+
+- Temperature
+- Relative Humidity
+- Altitude
+- Latitude
+- Longitude
+- SNR
+- RSSI
 
 ### Integration with **agile-stack**
 
