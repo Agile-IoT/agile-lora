@@ -29,8 +29,10 @@ class LoRaServerClient (threading.Thread):
       self._logger = logging.getLogger(globals.BUS_NAME)       
       self._cayenne =   cayenne_parser.CayenneParser()
       self._active_timer = {}      
-      self._thread = threading.Thread(target=self.Start, name="LoRaServer_thread")
+      self._thread = threading.Thread(target=self.Start, name="LoRaServer_thread")      
       # self._thread = threading.Thread(target=self.TestParser, name="LoRaServer_thread")
+
+      self.loraserver_topic = 'application/+/node/+/rx'
       self._thread.daemon = True
       self._thread.start()    
 
@@ -142,16 +144,17 @@ class LoRaServerClient (threading.Thread):
       self._mqttc.on_message = self.on_message
       self._mqttc.on_subscribe = self.on_subscribe
       
-      self._mqttc.username_pw_set(os.environ.get('LORAWAN_APPID'), os.environ.get('LORAWAN_PSW'))
-      self._mqttc.connect(os.environ.get('LORAWAN_MQTT_URL'), int(os.environ.get('LORAWAN_MQTT_PORT')), 60) 
+      self._mqttc.username_pw_set(os.environ.get('LORAWAN_APPID'), os.environ.get('LORAWAN_PSW'))      
 
+      self._mqttc.connect(os.environ.get('LORAWAN_MQTT_URL'), \
+            int(1883 if not(os.environ.get('LORAWAN_MQTT_PORT')) else os.environ.get('LORAWAN_MQTT_PORT')), 60) 
 
       # and listen to server
       run = True
       while run:
          self._mqttc.loop()
 
-   def on_connect (self, mqttc, mosq, obj, rc):      
+   def on_connect (self, mqttc, mosq, obj, rc):            
       if rc == 0:
          self._logger.info("Connected to MQTT Broker - " + os.environ.get('LORAWAN_MQTT_URL'))
       else:

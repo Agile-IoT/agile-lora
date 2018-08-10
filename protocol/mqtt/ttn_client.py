@@ -26,6 +26,8 @@ class TtnClient (threading.Thread):
 
       self._active_timer = {}      
       self._thread = threading.Thread(target=self.Start, name="Ttn_thread")
+
+      self.ttn_topic = '+/devices/+/up'
       self._thread.daemon = True
       self._thread.start()    
 
@@ -38,8 +40,9 @@ class TtnClient (threading.Thread):
       self._mqttc.on_message = self.on_message
       self._mqttc.on_subscribe = self.on_subscribe      
 
-      self._mqttc.username_pw_set(os.environ.get('LORAWAN_APPID'), os.environ.get('LORAWAN_PSW'))
-      self._mqttc.connect(os.environ.get('LORAWAN_MQTT_URL'), int(os.environ.get('LORAWAN_MQTT_PORT')), 60)             
+      self._mqttc.username_pw_set(os.environ.get('LORAWAN_APPID'), os.environ.get('LORAWAN_PSW'))      
+      self._mqttc.connect(os.environ.get('LORAWAN_MQTT_URL'), \
+            int(1883 if not(os.environ.get('LORAWAN_MQTT_PORT')) else os.environ.get('LORAWAN_MQTT_PORT')), 60)            
 
       # and listen to server
       run = True
@@ -53,7 +56,7 @@ class TtnClient (threading.Thread):
          self._logger.error("Connection error to MQTT Broker - " + os.environ.get('LORAWAN_MQTT_URL'))
 
       # subscribe for all devices of user
-      mqttc.subscribe(os.environ.get('LORAWAN_MQTT_TOPIC'))    
+      mqttc.subscribe(self.ttn_topic)    
 
    def on_message (self, mqttc,obj,msg):       
       raw = json.loads(msg.payload.decode())    
@@ -135,7 +138,7 @@ class TtnClient (threading.Thread):
       self._logger.info("mid: " + str(mid))          
 
    def on_subscribe(self, mosq, obj, mid, granted_qos):      
-      self._logger.info("Subscribed to topic " + str(os.environ.get('LORAWAN_MQTT_TOPIC')))          
+      self._logger.info("Subscribed to topic " + self.ttn_topic)          
 
 
    def on_unsubscribe(self, client, userdata, mid):      
