@@ -11,6 +11,7 @@
 
 
 # --- Imports -----------
+import os
 import sys
 sys.path.append('mqtt/')
 sys.path.append('utils/')
@@ -66,12 +67,20 @@ if __name__ == "__main__":
       datefmt="%Y-%m-%d %H:%M:%S",
       level=LOGLEVEL
    )   
+ 
+   # Check whether .env file exists (otherwise, we will assume that they will be already set)
+   if (os.path.exists('.env')):
+      load_dotenv(join(dirname(__file__), '.env'))
+      
+   # Set of environment variables that are needed to successfully run the protocol
+   if (os.environ.get('LORAWAN_APP_SERVER') and \
+       os.environ.get('LORAWAN_APPID') and \
+       os.environ.get('LORAWAN_PSW') and \
+       os.environ.get('LORAWAN_MQTT_URL'):      
+      dbusLoop()  
+   else:
+      logging.error('Needed environment variables not found - closing')
 
-   # Load .ENV file
-   load_dotenv(join(dirname(__file__), '.env'))
-
-   # Run DBus loop
-   dbusLoop()  
    endProgram(0)
 # -----------------------
 

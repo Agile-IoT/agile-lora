@@ -92,6 +92,7 @@ services:
       - LORAWAN_APPID  = "<YOUR APP ID>"
       - LORAWAN_PSW    = "<YOUR APP password>"
       - LORAWAN_URL = "< URL to the MQTT Broker>"   
+      - LORAWAN_MQTT_PORT= <MQTT Broker port>  # NOTE: Optional parameter (default: 1883)
     restart: always
     privileged: true
     network_mode: "host"
