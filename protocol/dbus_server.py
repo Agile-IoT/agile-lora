@@ -76,7 +76,7 @@ if __name__ == "__main__":
    if (os.environ.get('LORAWAN_APP_SERVER') and \
        os.environ.get('LORAWAN_APPID') and \
        os.environ.get('LORAWAN_PSW') and \
-       os.environ.get('LORAWAN_MQTT_URL'):      
+       os.environ.get('LORAWAN_MQTT_URL')):      
       dbusLoop()  
    else:
       logging.error('Needed environment variables not found - closing')
