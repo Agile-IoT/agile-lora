@@ -247,8 +247,7 @@ class LoRaWAN(dbus.service.Object):
       if (not globals.queue.empty()):         
 
          while (not globals.queue.empty()):
-            item = globals.queue.get(block=False)
-                    
+            item = globals.queue.get(block=False)                    
             
             hit = pydash.find(self._devices_list, {"hardwareID": item["hardwareID"]})
             if (hit):               

@@ -75,7 +75,7 @@ COPY dbus_protocols dbus_protocols
 COPY utils utils
 COPY scripts scripts
 COPY requirements.txt requirements.txt
-COPY .env .env
+# COPY .env .env
 COPY dbus_server.py dbus_server.py
 
 

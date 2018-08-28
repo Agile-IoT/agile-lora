@@ -7,5 +7,4 @@ paho-mqtt
 pydash
 queuelib
 pytz
-liccheck
 python-dotenv

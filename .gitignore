@@ -104,5 +104,8 @@ ENV/
 protocol/.vscode/
 
 #others
+#Deployment (docker-compose stuff)
+deployment/
+
 #protocol/mqtt/mqtt_client.py
 .vscode/
