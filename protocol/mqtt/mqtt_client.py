@@ -17,9 +17,9 @@ import logging
 class MqttClient():
     def __init__(self):                        
         self._logger = logging.getLogger(globals.BUS_NAME)    
-        self._listener = None
+        self._listener = None        
 
-        if os.environ.get('LORAWAN_APP_SERVER'):
+        if (os.environ.get('LORAWAN_APP_SERVER') is not None):
             try:
                 if (os.environ.get('LORAWAN_APP_SERVER') == "TTN"):
                     self._listener = ttn_client.TtnClient()        
@@ -27,7 +27,7 @@ class MqttClient():
                     self._listener = loraserver_client.LoRaServerClient()               
                 else: 
                     self._listener = None                    
-                    logging.error("Application server not found")                                                       
+                    logging.error("Application server not found - " + os.environ.get('LORAWAN_APP_SERVER'))
             except:                                                
                 sys.exit("Wrong application server")
         else:

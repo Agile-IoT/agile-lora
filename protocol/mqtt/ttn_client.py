@@ -151,7 +151,7 @@ class TtnClient (threading.Thread):
    def TearDown(self):  
       try: 
          if (self._mqttc):
-            self._mqttc.unsubscribe(os.environ.get('LORAWAN_MQTT_TOPIC'))
+            self._mqttc.unsubscribe(self.ttn_topic)
          if (isinstance(self._active_timer, threading.Timer)):
             self._active_timer.cancel()
       except:         

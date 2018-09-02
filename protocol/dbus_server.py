@@ -66,17 +66,17 @@ if __name__ == "__main__":
       format="%(asctime)s [%(levelname)s] [%(threadName)s] %(message)s",
       datefmt="%Y-%m-%d %H:%M:%S",
       level=LOGLEVEL
-   )   
+   )     
  
    # Check whether .env file exists (otherwise, we will assume that they will be already set)
    if (os.path.exists('.env')):
-      load_dotenv(join(dirname(__file__), '.env'))
-      
+       load_dotenv(join(dirname(__file__), '.env'))    
+
    # Set of environment variables that are needed to successfully run the protocol
-   if (os.environ.get('LORAWAN_APP_SERVER') and \
-       os.environ.get('LORAWAN_APPID') and \
-       os.environ.get('LORAWAN_PSW') and \
-       os.environ.get('LORAWAN_MQTT_URL')):      
+   if ((os.environ.get('LORAWAN_APP_SERVER') is not None) and \
+       (os.environ.get('LORAWAN_APPID') is not None) and \
+       (os.environ.get('LORAWAN_PSW') is not None) and \
+       (os.environ.get('LORAWAN_MQTT_URL') is not None)):          
       dbusLoop()  
    else:
       logging.error('Needed environment variables not found - closing')

@@ -133,7 +133,7 @@ class LoRaServerClient (threading.Thread):
       data["streams"] = streams   
       globals.queue.put(data)
       
-      self._logger.info("Message received - " + json.dumps(data))          
+      self._logger.debug("Message received - " + json.dumps(data))          
 
    def Start(self):
       self._logger.info("LoRaServer client thread instanced")        

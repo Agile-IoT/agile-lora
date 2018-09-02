@@ -63,6 +63,8 @@ LORAWAN_APP_SERVER = "LoRaServer"  # Current options handled ("TTN", "LoRaServer
 LORAWAN_APPID  = "<YOUR APP ID>"
 LORAWAN_PSW    = "<YOUR APP password>"
 LORAWAN_URL = "< URL to the MQTT Broker>"
+LORAWAN_MQTT_PORT= <MQTT Broker port>  # NOTE: Optional parameter (default: 1883)
+LORAWAN_MQTT_TOPIC= <MQTT to get subscribed to>
 ```
 As we have hinted before, two options are available, with slight differences between each other. For a deeper understanding, please refer to [TTN](https://www.thethingsnetwork.org/docs/applications/mqtt/) and [LoRaServer](https://www.loraserver.io/install/mqtt-auth/) MQTT documentation. 
 
@@ -88,11 +90,11 @@ services:
       - $DBUS_SESSION_SOCKET_DIR:/usr/src/app/.agile_bus
     environment:
       - DBUS_SESSION_BUS_ADDRESS=unix:path=/usr/src/app/.agile_bus/agile_bus_socket   
-      - LORAWAN_APP_SERVER = "LoRaServer"  # Current options handled ("TTN", "LoRaServer")
-      - LORAWAN_APPID  = "<YOUR APP ID>"
-      - LORAWAN_PSW    = "<YOUR APP password>"
-      - LORAWAN_URL = "< URL to the MQTT Broker>"   
-      - LORAWAN_MQTT_PORT= <MQTT Broker port>  # NOTE: Optional parameter (default: 1883)
+      - LORAWAN_APP_SERVER = LoRaServer  # Current options handled (TTN, LoRaServer)
+      - LORAWAN_APPID  = <YOUR APP ID>
+      - LORAWAN_PSW    = <YOUR APP password>
+      - LORAWAN_URL = < URL to the MQTT Broker>
+      - LORAWAN_MQTT_PORT= <MQTT Broker port>  # NOTE: Optional parameter (default: 1883)      
     restart: always
     privileged: true
     network_mode: "host"
