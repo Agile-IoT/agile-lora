@@ -10,7 +10,7 @@
 ################################################################# 
 
 import sys
-sys.path.append('../config/')
+sys.path.append('utils')
 import globals as globals
 
 import dbus
@@ -20,6 +20,7 @@ from queue import Queue
 import threading
 import struct
 import logging
+
 
 try:  
 

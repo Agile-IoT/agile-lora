@@ -59,33 +59,33 @@ else
     sleep 2
     echo "++ Started a new DBus session instance"
   fi
-
 fi
 
-export AGILE_STACK=../agile-stack
-export AGILE_HOST=localhost
-export AGILE_ARCH=armv7l
+#export AGILE_STACK=../agile-stack
+#export AGILE_HOST=localhost
+#export AGILE_ARCH=armv7l
 
-unset DOCKER_HOST
-# export DATA=$HOME/.agile
-export DATA=/usr/src/app/.agile
-export DOCKER_API_VERSION=1.22
+#unset DOCKER_HOST
+## export DATA=$HOME/.agile
+#export DATA=/usr/src/app/.agile
+#export DOCKER_API_VERSION=1.22
 
-export DBUS_SYSTEM_SOCKET=/var/run/dbus/system_bus_socket
-export DBUS_SESSION_SOCKET_DIR=$DATA/agile_bus
-export DBUS_SESSION_SOCKET_NAME=agile_bus_socket
-export DBUS_SESSION_SOCKET=$DBUS_SESSION_SOCKET_DIR/$DBUS_SESSION_SOCKET_NAME
-export DBUS_SESSION_BUS_ADDRESS=unix:path=$DBUS_SESSION_SOCKET
+#export DBUS_SYSTEM_SOCKET=/var/run/dbus/system_bus_socket
+#export DBUS_SESSION_SOCKET_DIR=$DATA/agile_bus
+#export DBUS_SESSION_SOCKET_NAME=agile_bus_socket
+#export DBUS_SESSION_SOCKET=$DBUS_SESSION_SOCKET_DIR/$DBUS_SESSION_SOCKET_NAME
+#export DBUS_SESSION_BUS_ADDRESS=unix:path=$DBUS_SESSION_SOCKET
 
-TOEXPORT="\n$TOEXPORT\nexport DBUS_SESSION_BUS_ADDRESS=$DBUS_SESSION_BUS_ADDRESS"
+#TOEXPORT="\n$TOEXPORT\nexport DBUS_SESSION_BUS_ADDRESS=$DBUS_SESSION_BUS_ADDRESS"
 
-if [ -z "$DBUS_SESSION_BUS_ADDRESS" ]; then
-  echo "!! Cannot export DBUS_SESSION_BUS_ADDRESS. Exit"
-  exit 1
-fi
+#if [ -z "$DBUS_SESSION_BUS_ADDRESS" ]; then
+#  echo "!! Cannot export DBUS_SESSION_BUS_ADDRESS. Exit"
+#  exit 1
+#fi
 
-# export DBUS_SESSION_BUS_ADDRESS
 
+echo DBUS_SESSION_BUS_ADDRESS=${DBUS_SESSION_BUS_ADDRESS}
+echo DBUS_SESSION_SOCKET_DIR=${DBUS_SESSION_SOCKET_DIR}
 
 
 # if [ $MODULE = 'all' ] || [ $MODULE = 'LoRA' ]; then
