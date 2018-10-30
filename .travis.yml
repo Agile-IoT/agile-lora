@@ -1,0 +1,29 @@
+os: linux
+dist: trusty
+
+before_install:
+    - sudo apt-get -qq update
+    - sudo apt-get install -y libdbus-glib-1-dev
+
+language: python
+python: "3.4"
+
+branches:
+    only: master
+
+# env:
+#     matrix:
+#         - TASK=lint
+#         - TASK=test
+#         - TASK=coverage
+
+install:
+  - pip install -r protocol/requirements.txt
+  - pip install protocol/.
+
+
+script: python3 -m unittest discover -v --start-directory protocol/test/ --pattern unit*.py
+
+
+
+
