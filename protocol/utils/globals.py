@@ -8,7 +8,7 @@
 ################################################################# 
 
 import enum
-from queue import Queue
+from queue import LifoQueue
 
 # LoRa Protocol
 OPATH = "/org/eclipse/agail/protocol/LoRa"
@@ -21,7 +21,7 @@ PM_IFACE = "org.eclipse.agail.ProtocolManager"
 PM_BUS_NAME = "org.eclipse.agail.ProtocolManager"
 
 # Queue
-queue = Queue()
+queue = LifoQueue()
 
 # States
 class DEVICE_STATUS(enum.Enum):

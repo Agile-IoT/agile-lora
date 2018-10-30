@@ -10,7 +10,7 @@
 ################################################################# 
 
 import sys
-sys.path.append("../utils/")
+sys.path.append("./utils/")
 import unittest
 import codecs
 import base64

@@ -38,9 +38,8 @@ class LoRaServerClient (threading.Thread):
 
    def TestParser(self):            
       
-      self._active_timer = threading.Timer(6, self.TestParser)                              
+      self._active_timer = threading.Timer(0.4, self.TestParser)                              
       self._active_timer.start()
-
       self._mqttc = mqtt.Client() 
       
       raw = {
