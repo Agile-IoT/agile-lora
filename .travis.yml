@@ -4,7 +4,6 @@ python:
   - "3.2"
 
 install:
-  - pip install -r travis-deps.txt
-  - pip install .
+  - pip install -r travis-deps.txt  
 
 script: python3 -m unittest discover -v --start-directory test/ --pattern unit*.py
