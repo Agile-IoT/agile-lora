@@ -2,7 +2,7 @@
 #######  Pip module requirements  #######
 ####### for the AGILE DBus Server #######
 #
-dbus-python
+#dbus-python
 paho-mqtt
 pydash
 queuelib
