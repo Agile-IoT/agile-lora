@@ -14,6 +14,11 @@
 
 # Agile LoRa(WAN) protocol implementation
 
+[![Python](https://img.shields.io/badge/python->3.0-blue.svg)](https://github.com/Agile-IoT/agile-lora)
+[![License](https://img.shields.io/badge/License-EPL%202.0-red.svg)](https://opensource.org/4licenses/EPL-2.0)
+
+
+
 > LoRaWAN protocol implementation for the AGILE gateway, based on MQTT and Cayenne
 
 This repository handles the communication between LoRaWAN nodes (Class A) and the legacy [AGILE stack](https://github.com/Agile-IoT/agile-stack), as shown in the figure below. 
@@ -46,9 +51,7 @@ However, we also offer another version that includes an auto-configurable Docker
 ### Requirements:
 - Software:
   * [docker + docker-compose](https://docs.docker.com/compose/install/)
-  * [Node.js + npm](https://nodejs.org/en/)
-  * [resin CLI](https://www.npmjs.com/package/resin-cli)
-  * [etcher](https://etcher.io/)
+  * [Python3](https://www.python.org/download/releases/3.0/)
 - Hardware:
   * Raspberry pi 2 or 3
   * SD card `>= 8gb`

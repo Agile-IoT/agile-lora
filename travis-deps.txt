@@ -1,0 +1,5 @@
+#
+#######  Pip module requirements  #######
+####### for the AGILE DBus Server #######
+#
+pydash
