@@ -6,4 +6,4 @@ python:
 install:
   - pip install -r travis-deps.txt  
 
-script: python3 -m unittest discover -v --start-directory test/ --pattern unit*.py
+script: python -m unittest discover -v --start-directory test/ --pattern unit*.py
