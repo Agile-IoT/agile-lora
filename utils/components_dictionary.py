@@ -9,7 +9,7 @@
 
 dictionary = {
   "Temperature": {
-    "unit": "Degree celsius (°C)",
+    "unit": "Degree celsius (C)",
     "format": "float"
   },
   "Relative_Humidity": {
@@ -37,15 +37,15 @@ dictionary = {
     "format": "float"
   },
   "Illuminance":{
-    "unit": "Degrees (º)",
+    "unit": "Lux",
     "format": "integer"
   },
   "Latitude": {
-    "unit": "Decimal Degrees (º)",
+    "unit": "Decimal Degrees",
     "format": "float"
   },  
   "Longitude": {
-    "unit": "Decimal Degrees (º)",
+    "unit": "Decimal Degrees",
     "format": "float"
   },
   "Altitude": {

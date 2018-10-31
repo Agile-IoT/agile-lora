@@ -49,12 +49,12 @@ LPP_ANALOG_INPUT_SIZE = 2           # 2 bytes, 0.01 signed
 LPP_ANALOG_OUTPUT_SIZE = 2          # 2 bytes, 0.01 signed
 LPP_LUMINOSITY_SIZE = 2             # 2 bytes, 1 lux unsigned
 LPP_PRESENCE_SIZE = 1               # 1 byte, 1
-LPP_TEMPERATURE_SIZE = 2            # 2 bytes, 0.1°C signed
+LPP_TEMPERATURE_SIZE = 2            # 2 bytes, 0.1 degrees C signed
 LPP_RELATIVE_HUMIDITY_SIZE = 1      # 1 byte, 0.5% unsigned
 LPP_ACCELEROMETER_SIZE = 6          # 2 bytes per axis, 0.001G
 LPP_BAROMETRIC_PRESSURE_SIZE = 2    # 2 bytes 0.1 hPa Unsigned
-LPP_GYROMETER_SIZE = 6              # 2 bytes per axis, 0.01 °/s
-LPP_GPS_SIZE = 9                    # 3 byte lon/lat 0.0001 °, 3 bytes alt 0.01 meter
+LPP_GYROMETER_SIZE = 6              # 2 bytes per axis, 0.01 degrees/s
+LPP_GPS_SIZE = 9                    # 3 byte lon/lat 0.0001 degrees, 3 bytes alt 0.01 meter
 
 class CayenneParser ():
    def __init__(self):  

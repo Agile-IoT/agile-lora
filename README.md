@@ -15,6 +15,7 @@
 # Agile LoRa(WAN) protocol implementation
 
 [![Python](https://img.shields.io/badge/python->3.0-blue.svg)](https://github.com/Agile-IoT/agile-lora)
+[![Build Status](https://travis-ci.org/Agile-IoT/agile-lora.svg?branch=master)](https://travis-ci.org/Agile-IoT/agile-lora)
 [![License](https://img.shields.io/badge/License-EPL%202.0-red.svg)](https://opensource.org/4licenses/EPL-2.0)
 
 
