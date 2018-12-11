@@ -10,7 +10,7 @@
 ################################################################# 
 
 import sys
-sys.path.append('../config/')
+sys.path.append('../utils/')
 import globals as globals
 
 import dbus

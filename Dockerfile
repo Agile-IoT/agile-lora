@@ -13,8 +13,7 @@ WORKDIR /usr/src/app
 ENV APATH /usr/src/app
 
 # Add packages
-RUN apt-get update && apt-get install --no-install-recommends -y \
-    # openjdk-7-jdk \
+RUN apt-get update && apt-get install --no-install-recommends -y \    
     qdbus \  
     python3-dbus \
     libdbus-1-dev \
@@ -29,4 +28,4 @@ RUN apt-get update && apt-get install --no-install-recommends -y \
 COPY . .
 
 RUN python3 -m pip install -r requirements.txt 
-CMD [ "bash", "/usr/src/app/scripts/start.sh" ]
+CMD ["python3", "./dbus_server.py"]

@@ -13,27 +13,6 @@
 #-------------------------------------------------------------------------------
 
 
-MODULE=${1:-all}
-# DEPS=`realpath ./deps` 
-
-# if [ ! -e "$DEPS" ]; then
-#   echo "Installing dependencies" 
-#   ./scripts/install-deps.sh
-# fi
-
-TOEXPORT=""
-
-# if [ ! -z "$DISPLAY" ]; then
-#   echo ">> DISPLAY available, reusing current display"
-# else
-#   export DISPLAY=:0
-#   TOEXPORT="\n$TOEXPORT\nexport DISPLAY=$DISPLAY"
-# fi
-
-ME=`whoami`
-
-
-
 if [ ! -z "$DBUS_SESSION_BUS_ADDRESS" ]; then
   echo ">> DBUS_SESSION_BUS_ADDRESS available, reusing current instance"
 else
@@ -59,7 +38,6 @@ else
     sleep 2
     echo "++ Started a new DBus session instance"
   fi
-
 fi
 
 export AGILE_STACK=../agile-stack
@@ -84,29 +62,11 @@ if [ -z "$DBUS_SESSION_BUS_ADDRESS" ]; then
   exit 1
 fi
 
-# export DBUS_SESSION_BUS_ADDRESS
+# Register LoRa in ProtocolManager
+qdbus org.eclipse.agail.ProtocolManager /org/eclipse/agail/ProtocolManager org.eclipse.agail.ProtocolManager.Add LoRa
+dbus-send --session --print-reply --type=method_call --dest='org.eclipse.agail.ProtocolManager' '/org/eclipse/agail/ProtocolManager' org.eclipse.agail.ProtocolManager.Add string:"LoRa"
 
-
-
-# if [ $MODULE = 'all' ] || [ $MODULE = 'LoRA' ]; then
-#   ./scripts/stop.sh "protocol.LoRa"
-
-  # wait for ProtocolManager to initialize
-  # while `! qdbus org.eclipse.agail.ProtocolManager > /dev/null`; do
-  #   echo "waiting for ProtocolManager to initialize";
-  #   sleep 1;
-  # done
-
-  # Register LoRa in ProtocolManager
-  qdbus org.eclipse.agail.ProtocolManager /org/eclipse/agail/ProtocolManager org.eclipse.agail.ProtocolManager.Add LoRa
-
-  python3 ./dbus_server.py
-  echo "Started AGILE LoRa protocol"
-# fi
-
-
-echo "Module launched use these variables in the shell:"
-echo $TOEXPORT
-echo ""
+python3 ./dbus_server.py
+echo "Started AGILE LoRa protocol"
 
 wait

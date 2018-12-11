@@ -101,7 +101,6 @@ ENV/
 .mypy_cache/
 
 # vscode specific
-protocol/.vscode/
 
 #others
 #Deployment (docker-compose stuff)

@@ -29,14 +29,14 @@ class LoRaServerClient (threading.Thread):
       self._logger = logging.getLogger(globals.BUS_NAME)       
       self._cayenne =   cayenne_parser.CayenneParser()
       self._active_timer = {}      
-      self._thread = threading.Thread(target=self.Start, name="LoRaServer_thread")      
-      # self._thread = threading.Thread(target=self.TestParser, name="LoRaServer_thread")
+      # self._thread = threading.Thread(target=self.Start, name="LoRaServer_thread")      
+      self._thread = threading.Thread(target=self.TestParser, name="LoRaServer_thread")
 
       self.loraserver_topic = 'application/+/node/+/rx'
       self._thread.daemon = True
       self._thread.start()    
 
-   def TestParser(self):            
+   def TestParser(self):              
       
       self._active_timer = threading.Timer(0.4, self.TestParser)                              
       self._active_timer.start()
@@ -45,7 +45,7 @@ class LoRaServerClient (threading.Thread):
       raw = {
             "applicationID": "1",
             "applicationName": "my-app",
-            "deviceName": "Seeduino",
+            "deviceName": "LoRa",
             "devEUI": "3339343771356214",
             "rxInfo": [
                   {
