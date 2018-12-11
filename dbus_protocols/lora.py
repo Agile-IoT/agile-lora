@@ -354,8 +354,7 @@ class ProtocolManager(dbus.service.Object):
       else: 
          self._logger.error ("Protocol Manager not running")           
 
-   def startDbus(self):                 
-
+   def startDbus(self):          
       pm_bus = dbus.SessionBus()
       pm_bus.request_name(globals.PM_BUS_NAME)
       pm_bus_name = dbus.service.BusName(globals.PM_BUS_NAME, bus=pm_bus)      

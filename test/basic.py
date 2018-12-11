@@ -36,8 +36,8 @@ try:
   eth0 = bus.get_object( globals.BUS_NAME, globals.OPATH)
   interface = dbus.Interface (eth0, "org.eclipse.agail.Protocol")
   
-  logging.info ("---INTROSPECTION---")
-  logging.info (eth0.Introspect())
+  # logging.info ("---INTROSPECTION---")
+  # logging.info (eth0.Introspect())
   logging.info ("---Connect new device---")
   logging.info (eth0.Connect("3339343771356214"))
   logging.info ("---Get Devices---")
