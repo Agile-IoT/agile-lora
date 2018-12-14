@@ -8,7 +8,9 @@
 ################################################################# 
 
 # agile-lora installation
-FROM resin/raspberrypi3-python
+# FROM resin/raspberrypi3-python
+FROM ubuntu:16.04
+
 WORKDIR /usr/src/app 
 ENV APATH /usr/src/app
 

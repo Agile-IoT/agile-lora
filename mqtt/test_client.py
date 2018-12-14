@@ -29,12 +29,110 @@ class LoRaServerClient (threading.Thread):
       self._logger = logging.getLogger(globals.BUS_NAME)       
       self._cayenne =   cayenne_parser.CayenneParser()
       self._active_timer = {}      
-      self._thread = threading.Thread(target=self.Start, name="LoRaServer_thread")            
+      # self._thread = threading.Thread(target=self.Start, name="LoRaServer_thread")      
+      self._thread = threading.Thread(target=self.TestParser, name="LoRaServer_thread")
 
       self.loraserver_topic = 'application/+/node/+/rx'
       self._thread.daemon = True
       self._thread.start()    
-    
+
+   def TestParser(self):              
+      
+      self._active_timer = threading.Timer(0.4, self.TestParser)                              
+      self._active_timer.start()
+      self._mqttc = mqtt.Client() 
+      
+      raw = {
+            "applicationID": "1",
+            "applicationName": "my-app",
+            "deviceName": "LoRa",
+            "devEUI": "3339343771356214",
+            "rxInfo": [
+                  {
+                        "mac": "0000000000010203",
+                        "time": "2018-04-17T09:23:26.441513Z",
+                        "rssi": -49,
+                        "loRaSNR": 10,
+                        "name": "0000000000010203",
+                        "latitude": 10,
+                        "longitude": 20,
+                        "altitude": -1
+                  }
+            ],
+            "txInfo": {
+                  "frequency": 868100000,
+                  "dataRate": {
+                        "modulation": "LORA",
+                        "bandwidth": 125,
+                        "spreadFactor": 7
+                  },
+                  "adr": True,
+                  "codeRate": "4/5"
+            },
+            "fCnt": 73,
+            "fPort": 8,
+            "data": "AmcA7QNoTw=="
+      }    
+      
+      data = {
+         "deviceID": raw["deviceName"],
+         "hardwareID": raw["devEUI"],            
+         "streams": [
+         ],
+         "connected": False,
+         "status": globals.STATUS_TYPE['AVAILABLE'].name         
+      } 
+      streams = self._cayenne.decodeCayenneLpp(raw["data"], str(raw["rxInfo"][0]["time"]))                 
+
+      # Append data from the message (overhead) - static process
+      # i.e., SNR, RSSI, Latitude, Longitude, Altitude
+      streams.append ({
+         "format": component.dictionary["RSSI"]["format"],
+         "subscribed":False,
+      #    "value": raw["rxInfo"][0]["rssi"],
+         "value": random.uniform(-60,-40),
+         "id": "RSSI",
+         "unit": component.dictionary["RSSI"]["unit"],
+         "lastUpdate": str(raw["rxInfo"][0]["time"])}
+      )
+      streams.append ({
+         "format": component.dictionary["SNR"]["format"],
+         "subscribed":False,
+      #    "value": raw["rxInfo"][0]["loRaSNR"],
+         "value": random.uniform(0,20),
+         "id": "SNR",
+         "unit": component.dictionary["SNR"]["unit"],
+         "lastUpdate": str(raw["rxInfo"][0]["time"])}
+      )
+      streams.append ({
+         "format": component.dictionary["Latitude"]["format"],
+         "subscribed":False,
+         "value": raw["rxInfo"][0]["latitude"],
+         "id": "Latitude",
+         "unit": component.dictionary["Latitude"]["unit"],
+         "lastUpdate": str(raw["rxInfo"][0]["time"])}
+      )
+      streams.append ({
+         "format": component.dictionary["Longitude"]["format"],
+         "subscribed":False,
+         "value": raw["rxInfo"][0]["longitude"],
+         "id": "Longitude",
+         "unit": component.dictionary["Longitude"]["unit"],
+         "lastUpdate": str(raw["rxInfo"][0]["time"])}
+      )
+      streams.append ({
+         "format": component.dictionary["Altitude"]["format"],
+         "subscribed":False,
+         "value": raw["rxInfo"][0]["altitude"],
+         "id": "Altitude",
+         "unit": component.dictionary["Altitude"]["unit"],
+         "lastUpdate": str(raw["rxInfo"][0]["time"])}
+      )
+
+      data["streams"] = streams   
+      globals.queue.put(data)
+      
+      self._logger.debug("Message received - " + json.dumps(data))          
 
    def Start(self):
       self._logger.info("LoRaServer client thread instanced")        

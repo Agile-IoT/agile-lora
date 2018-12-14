@@ -48,11 +48,27 @@ class LoRaWAN(dbus.service.Object):
       self._thread_id = str(self._thread.ident)    
 
       # Protocol Manager
-      self._protocol_manager = ProtocolManager() 
-      if self._protocol_manager.IsProtocolManagerRunning():
-         self._thread_pm = threading.Thread(target=self._protocol_manager.startDbus, name="DBUS_thread")
-         self._thread_pm.start()
-         self._thread_pm_id = str(self._thread.ident)       
+      self._is_manager_running = self.CheckProtocolManager()
+
+      self._logger.info (self._is_manager_running)
+      if (self._is_manager_running):
+         self._devices = []             
+         self._protocol_manager = ProtocolManager()  
+
+         # self._thread_pm = threading.Thread(target=self._protocol_manager.startDbus, name="DBUS_thread")
+         # self._thread_pm.start()
+         # self._thread_pm_id = str(self._thread.ident) 
+
+         self._protocol_manager.startDbus()
+         self._protocol_manager.RegisterProtocol() 
+      else: 
+         self._logger.error ("Protocol Manager not running")           
+           
+      
+      # if self._protocol_manager.IsProtocolManagerRunning():
+      #    self._thread_pm = threading.Thread(target=self._protocol_manager.startDbus, name="DBUS_thread")
+      #    self._thread_pm.start()
+      #    self._thread_pm_id = str(self._thread.ident)       
 
       # Timers and tasks
       self._task_discovery = {}
@@ -230,7 +246,7 @@ class LoRaWAN(dbus.service.Object):
       #Discovery tasks - First version -> Discover all devices
       if (self._discovery_status == globals.DISCOVERY_STATUS["RUNNING"]):   
 
-         if self._protocol_manager.IsProtocolManagerRunning():            
+         if self._is_manager_running:            
             # Need to get the list of discovered devices and send the signal only in case of a new one
             self._protocol_manager.GetDevices()            
             # Send signal only in case of a new device
@@ -330,9 +346,21 @@ class LoRaWAN(dbus.service.Object):
       elif (value_type == "string"):
             output = value.encode()
       else:
-            ProtocolException("Format value not compatible (choose between integer, float or string")   
-      
+            ProtocolException("Format value not compatible (choose between integer, float or string")         
       return output
+
+   # Check whether the actual ProtocolManager is running in the Session Bus
+   def CheckProtocolManager(self):
+      
+      for service in dbus.SessionBus().list_names():         
+         self._logger.info (service)
+         
+         if service == "org.eclipse.agail.ProtocolManager":            
+            self._is_manager_running = True
+            self._logger.info ("++++")
+            return True
+      self._is_manager_running = False
+      return False  
 
    def TearDown(self):
       if (isinstance(self._task_discovery, threading.Timer)):
@@ -346,13 +374,12 @@ class LoRaWAN(dbus.service.Object):
 class ProtocolManager(dbus.service.Object):   
    def __init__(self):   
       self._logger = logging.getLogger(globals.PM_BUS_NAME)   
-
-      self._is_manager_running = self.CheckProtocolManager()
-      if (self.IsProtocolManagerRunning()):
-         self._devices = []              
-         self.RegisterProtocol() 
-      else: 
-         self._logger.error ("Protocol Manager not running")           
+      self._devices = []      
+      
+      # dbus.service.Object.__init__(self, pm_bus_name, globals.PM_OPATH)
+      # temp = pm_bus.get_object( "org.eclipse.agail.ProtocolManager", "/org/eclipse/agail/ProtocolManager")
+      # self._interface = dbus.Interface (temp, "org.eclipse.agail.ProtocolManager")  
+    
 
    def startDbus(self):          
       pm_bus = dbus.SessionBus()
@@ -361,21 +388,7 @@ class ProtocolManager(dbus.service.Object):
 
       dbus.service.Object.__init__(self, pm_bus_name, globals.PM_OPATH)
       temp = pm_bus.get_object( "org.eclipse.agail.ProtocolManager", "/org/eclipse/agail/ProtocolManager")
-      self._interface = dbus.Interface (temp, "org.eclipse.agail.ProtocolManager")      
-
-
-   # Check whether the actual ProtocolManager is running in the Session Bus
-   def CheckProtocolManager(self):
-      for service in dbus.SessionBus().list_names():         
-         if service == "org.eclipse.agail.ProtocolManager":            
-            self._is_manager_running = True
-            break
-      self._is_manager_running = False
-   
-   # Returns True if the legacy Manager is running; false otherwise
-   def IsProtocolManagerRunning(self):
-      self._is_manager_running
-      
+      self._interface = dbus.Interface (temp, "org.eclipse.agail.ProtocolManager") 
 
    def RegisterProtocol(self):       
       print('Registering LoRaWAN protocol on ProtocolManager')         
